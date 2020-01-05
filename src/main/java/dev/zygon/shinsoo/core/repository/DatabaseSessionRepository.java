@@ -66,7 +66,7 @@ public class DatabaseSessionRepository implements SessionRepository {
         }
     }
 
-    private UserStatus mapStatus(Record3<Object, Object, Object> record) {
+    private UserStatus mapStatus(Record3 record) {
         return UserStatus.builder()
                 .username(record.getValue(dictionary.value(SESSION_USERNAME_COLUMN), String.class))
                 .mapleId(record.getValue(dictionary.value(SESSION_MAPLE_ID_COLUMN), String.class))

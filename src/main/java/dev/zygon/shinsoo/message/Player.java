@@ -1,5 +1,6 @@
 package dev.zygon.shinsoo.message;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Player {
+
+    @JsonIgnore
+    public static final long PLAYER_UNRANKED = 0;
 
     @Builder.Default
     private String name = "";

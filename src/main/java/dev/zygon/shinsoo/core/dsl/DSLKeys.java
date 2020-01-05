@@ -9,6 +9,15 @@ public class DSLKeys {
     public static final String USER_EMAIL_COLUMN = "user.email.column";
     public static final String USER_GM_LEVEL_COLUMN = "user.gm.level.column";
 
+    public static final String PLAYER_TABLE = "player.table";
+    public static final String PLAYER_RANK_COLUMN = "player.rank.column";
+    public static final String PLAYER_NAME_COLUMN = "player.name.column";
+    public static final String PLAYER_LEVEL_COLUMN = "player.level.column";
+    public static final String PLAYER_EXP_COLUMN = "player.exp.column";
+    public static final String PLAYER_FAME_COLUMN = "player.fame.column";
+    public static final String PLAYER_JOB_COLUMN = "player.job.column";
+    public static final String PLAYER_GUILD_COLUMN = "player.guild.column";
+
     public static final String SESSION_TABLE = "session.table";
     public static final String SESSION_NONCE_COLUMN = "session.nonce.column";
     public static final String SESSION_EXPIRE_COLUMN = "session.expire.column";

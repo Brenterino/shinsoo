@@ -1,11 +1,15 @@
 package dev.zygon.shinsoo.message;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.Collections;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -33,4 +37,8 @@ public class Paginated {
 
     @Builder.Default
     private long last = 0;
+
+    @Builder.Default
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<String> error = Collections.emptyList();
 }

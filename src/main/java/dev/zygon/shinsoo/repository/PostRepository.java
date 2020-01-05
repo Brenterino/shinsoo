@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface PostRepository {
 
+    long count() throws Exception;
+
     List<Post> posts(long offset, long limit) throws Exception;
 }

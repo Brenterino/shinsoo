@@ -106,7 +106,7 @@ public class DatabaseUserRepository implements UserRepository {
         }
     }
 
-    private UserDetails mapDetails(Record5<Object, Object, Object, Object, Object> record) {
+    private UserDetails mapDetails(Record5 record) {
         return UserDetails.builder()
                 .username(record.getValue(dictionary.value(USER_USERNAME_COLUMN), String.class))
                 .mapleId(record.getValue(dictionary.value(USER_MAPLE_ID_COLUMN), String.class))

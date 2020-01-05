@@ -27,6 +27,19 @@ public class DatabasePostRepository implements PostRepository {
     DSLDictionary dictionary;
 
     @Override
+    public long count() throws Exception {
+        Connection connection = database.getConnection();
+        try {
+            return using(connection)
+                    .selectCount()
+                    .from(table(dictionary.value(POST_TABLE)))
+                    .fetchOne(0, long.class);
+        } finally {
+            database.release(connection);
+        }
+    }
+
+    @Override
     public List<Post> posts(long offset, long limit) throws SQLException {
         Connection connection = database.getConnection();
         try {
@@ -40,7 +53,7 @@ public class DatabasePostRepository implements PostRepository {
                             field(dictionary.value(POST_UPDATED_COLUMN)),
                             field(dictionary.value(POST_CONTENT_COLUMN)))
                     .from(table(dictionary.value(POST_TABLE)))
-                    .orderBy(field(dictionary.value(POST_CREATED_COLUMN)))
+                    .orderBy(field(dictionary.value(POST_ID_COLUMN)).desc())
                     .offset(offset)
                     .limit(limit)
                     .fetch(this::mapPost);
@@ -49,7 +62,7 @@ public class DatabasePostRepository implements PostRepository {
         }
     }
 
-    private Post mapPost(Record8<Object, Object, Object, Object, Object, Object, Object, Object> record) {
+    private Post mapPost(Record8 record) {
         return Post.builder()
                 .id(record.getValue(dictionary.value(POST_ID_COLUMN), Long.class))
                 .type(record.getValue(dictionary.value(POST_TYPE_COLUMN), String.class))

@@ -51,7 +51,7 @@ public class UserJoinRepositoryService implements UserJoinService {
             else if (repository.emailExists(email))
                 return createFailedJoinResponse("User with this email exists already!");
             else
-                return doJoin(createDetailsFromCredentials(credentials));
+                return createUser(createDetailsFromCredentials(credentials));
         } catch (Exception ex) {
             log.error("Something went wrong while trying to insert new user into database.", ex);
             return createFailedJoinResponse("Registration failed due to database issues.");
@@ -69,7 +69,7 @@ public class UserJoinRepositoryService implements UserJoinService {
                 .build();
     }
 
-    private JoinResponse doJoin(UserDetails details) throws Exception {
+    private JoinResponse createUser(UserDetails details) throws Exception {
         if (repository.create(details))
             return createSuccessfulJoinResponse();
         else
