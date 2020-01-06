@@ -24,17 +24,17 @@ public class NewsRepositoryService implements NewsService {
     @Override
     public Paginated news(long page) {
         try {
-            long totalPages = (long) Math.ceil(repository.count() / (double) PostList.DEFAULT_PAGE_SIZE);
+            long totalPages = (long) Math.ceil(repository.count() / (double) Paginated.DEFAULT_PAGE_SIZE);
             if (page < 0 || page > totalPages)
                 return createFailedPagination("No results to display.");
             else {
-                long offset = (page - 1) * PostList.DEFAULT_PAGE_SIZE;
-                List<Post> posts = repository.posts(offset, PostList.DEFAULT_PAGE_SIZE);
+                long offset = (page - 1) * Paginated.DEFAULT_PAGE_SIZE;
+                List<Post> posts = repository.posts(offset, Paginated.DEFAULT_PAGE_SIZE);
                 return createPaginatedPosts(posts, page, totalPages);
             }
         } catch (Exception ex) {
             log.error("Unable to load paginated posts from repository.", ex);
-            return createFailedPagination("");
+            return createFailedPagination("Unable to load posts from database.");
         }
     }
 

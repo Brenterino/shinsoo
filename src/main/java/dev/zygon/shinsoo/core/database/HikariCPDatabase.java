@@ -8,6 +8,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import javax.inject.Singleton;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Optional;
 
 @Singleton
 public class HikariCPDatabase implements Database {
@@ -19,10 +20,10 @@ public class HikariCPDatabase implements Database {
     String url;
 
     @ConfigProperty(name = "database.user", defaultValue = "")
-    String username;
+    Optional<String> username;
 
     @ConfigProperty(name = "database.pass", defaultValue = "")
-    String password;
+    Optional<String> password;
 
     private HikariConfig config;
     private HikariDataSource source;
@@ -42,8 +43,8 @@ public class HikariCPDatabase implements Database {
     private void init() {
         config.setDriverClassName(driver);
         config.setJdbcUrl(url);
-        config.setUsername(username);
-        config.setPassword(password);
+        config.setUsername(username.orElse(""));
+        config.setPassword(password.orElse(""));
 
         source = new HikariDataSource(config);
         initialized = true;

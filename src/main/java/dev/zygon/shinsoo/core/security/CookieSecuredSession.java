@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequestScoped
 public class CookieSecuredSession implements SecuredSession {
 
-    private static final String SESSION_NONCE = "session_nonce";
+    private static final String SESSION_NONCE = "SESSION_NONCE";
 
     @CookieParam(SESSION_NONCE)
     String nonce;
@@ -56,7 +56,7 @@ public class CookieSecuredSession implements SecuredSession {
     }
 
     private UserStatus beginSession(UserStatus status) {
-        String cookieNonce = generator.nonce();
+        String cookieNonce = generator.nonce(status.getUsername());
         try {
             session.beginSession(cookieNonce, status);
             status.setLoggedIn(true);
@@ -87,7 +87,7 @@ public class CookieSecuredSession implements SecuredSession {
         }
     }
 
-    private static CookieHoldingUserStatus holdCookie(String nonce, UserStatus status) {
+    private CookieHoldingUserStatus holdCookie(String nonce, UserStatus status) {
         return CookieHoldingUserStatus.builder()
                 .username(status.getUsername())
                 .mapleId(status.getMapleId())

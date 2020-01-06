@@ -33,7 +33,7 @@ public class JoinCredentials {
     @PartType(MediaType.TEXT_PLAIN)
     private String confirmation;
 
-    @FormParam("recaptcha")
+    @FormParam("g-recaptcha-response")
     @PartType(MediaType.TEXT_PLAIN)
     private String token;
 }

@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     implementation(enforcedPlatform("io.quarkus:quarkus-bom:1.1.0.Final"))
+    implementation("io.quarkus:quarkus-rest-client")
     implementation("io.quarkus:quarkus-resteasy")
     implementation("io.quarkus:quarkus-resteasy-jackson")
     implementation("org.jboss.resteasy:resteasy-multipart-provider")
@@ -21,6 +22,9 @@ dependencies {
     implementation("org.mindrot:jbcrypt:0.4")
     implementation("com.zaxxer:HikariCP:3.4.1")
     implementation("org.jooq:jooq:3.12.3")
+
+    implementation("io.quarkus:quarkus-jdbc-mysql")
+    runtimeOnly("mysql:mysql-connector-java:8.0.18")
 
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")

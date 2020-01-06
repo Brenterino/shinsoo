@@ -1,0 +1,34 @@
+{
+  "user.table": "user",
+  "user.username.column": "name",
+  "user.maple_id.column": "maple_id",
+  "user.password.column": "password",
+  "user.email.column": "email",
+  "user.gm.level.column": "gm_level",
+
+  "player.table": "player",
+  "player.rank.column": "rank",
+  "player.name.column": "name",
+  "player.level.column": "level",
+  "player.exp.column": "exp",
+  "player.fame.column": "fame",
+  "player.job.column": "job",
+  "player.guild.column": "guild",
+
+  "session.table": "session",
+  "session.nonce.column": "nonce",
+  "session.expire.column": "expiration",
+  "session.username.column": "user_name",
+  "session.maple_id.column": "user_maple_id",
+  "session.gm.level.column": "user_gm_level",
+
+  "post.table": "post",
+  "post.id.column": "id",
+  "post.type.column": "type",
+  "post.views.column": "views",
+  "post.title.column": "title",
+  "post.author.column": "author",
+  "post.created.column": "created",
+  "post.updated.column": "updated",
+  "post.content.column": "content"
+}

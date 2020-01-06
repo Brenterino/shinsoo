@@ -1,43 +1,55 @@
 package dev.zygon.shinsoo.core.service;
 
-import dev.zygon.shinsoo.message.Paginated;
-import dev.zygon.shinsoo.message.PaginatedError;
-import dev.zygon.shinsoo.message.Player;
-import dev.zygon.shinsoo.message.Ranking;
+import dev.zygon.shinsoo.message.*;
+import dev.zygon.shinsoo.repository.PlayerRepository;
 import dev.zygon.shinsoo.service.RankingService;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.Collections;
+import javax.inject.Inject;
+import java.util.List;
 
+import static java.util.Collections.singletonList;
+
+@Slf4j
 @ApplicationScoped
 public class RankingRepositoryService implements RankingService {
 
-    private Player player;
-    private Ranking ranking;
-
-    public RankingRepositoryService() {
-        player = Player.builder()
-                .name("SwagAngel69")
-                .fame(-69)
-                .guild("Solaxia")
-                .build();
-        ranking = Ranking.builder()
-                .success(true)
-                .prev(1)
-                .current(1)
-                .next(1)
-                .last(1)
-                .players(Collections.singletonList(player))
-                .build();
-    }
+    @Inject
+    PlayerRepository repository;
 
     @Override
     public Paginated rankings(long page) {
-        if (page == 0)
-            return PaginatedError.builder()
-                    .success(false)
-                    .error(Collections.singletonList("No results"))
-                    .build();
-        return ranking;
+        try {
+            long totalPages = (long) Math.ceil(repository.count() / (double) Paginated.DEFAULT_PAGE_SIZE);
+            if (page < 0 || page > totalPages)
+                return createFailedPagination("No results to display.");
+            else {
+                long offset = (page - 1) * Paginated.DEFAULT_PAGE_SIZE;
+                List<Player> players = repository.players(offset, Paginated.DEFAULT_PAGE_SIZE);
+                return createPaginatedRankings(players, page, totalPages);
+            }
+        } catch (Exception ex) {
+            log.error("Unable to load paginated rankings from repository.", ex);
+            return createFailedPagination("Something went wrong when loading from the database!");
+        }
+    }
+
+    private Paginated createPaginatedRankings(List<Player> players, long page, long totalPages) {
+        return Ranking.builder()
+                .success(true)
+                .prev(Math.max(page - 1, 1))
+                .current(page)
+                .next(Math.min(page + 1, totalPages))
+                .last(totalPages)
+                .players(players)
+                .build();
+    }
+
+    private Paginated createFailedPagination(String message) {
+        return Paginated.builder()
+                .success(false)
+                .error(singletonList(message))
+                .build();
     }
 }

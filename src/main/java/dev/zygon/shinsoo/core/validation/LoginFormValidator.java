@@ -12,6 +12,10 @@ public class LoginFormValidator implements FormValidator {
 
     @Override
     public FormFailures validate() {
-        return null;
+        if (credentials.getEmail().isEmpty())
+            return FormFailures.EMAIL_EMPTY;
+        else if (credentials.getPassword().isEmpty())
+            return FormFailures.PASSWORD_EMPTY;
+        return FormFailures.NONE;
     }
 }

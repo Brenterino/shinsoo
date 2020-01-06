@@ -42,6 +42,8 @@ public class JsonDSLDictionary implements DSLDictionary {
             } catch (Exception ex) {
                 log.error("Unable to load DSL dictionary. Please verify it is correct and can be loaded.", ex);
             }
+        } else {
+            log.warn("DSL dictionary was not found. Database operations may fail.");
         }
         initialized = true;
     }
