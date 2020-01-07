@@ -4,10 +4,13 @@ import dev.zygon.shinsoo.database.Database;
 import dev.zygon.shinsoo.dsl.DSLDictionary;
 import dev.zygon.shinsoo.message.Player;
 import dev.zygon.shinsoo.repository.PlayerRepository;
+import org.infinispan.Cache;
+import org.infinispan.manager.EmbeddedCacheManager;
 import org.jooq.Record6;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -20,49 +23,70 @@ import static org.jooq.impl.DSL.using;
 @ApplicationScoped
 public class DatabasePlayerRepository implements PlayerRepository {
 
+    private static final String PLAYER_COUNT_CACHE = "PlayerCountCache";
+    private static final String PLAYER_PAGE_CACHE = "PlayerPageCache";
+
     @Inject
     Database database;
 
     @Inject
     DSLDictionary dictionary;
 
+    @Inject
+    EmbeddedCacheManager manager;
+
+    @Transactional
     @Override
     public long count() throws SQLException {
+        Cache<String, Long> countCache = manager.getCache(PLAYER_COUNT_CACHE);
+        if (countCache.containsKey(PLAYER_COUNT_CACHE))
+            return countCache.get(PLAYER_COUNT_CACHE);
+
         Connection connection = database.getConnection();
         try {
-            return using(connection)
+            long count = using(connection)
                     .selectCount()
                     .from(table(dictionary.value(PLAYER_TABLE)))
                     .where(field(dictionary.value(PLAYER_RANK_COLUMN)).gt(Player.PLAYER_UNRANKED))
                     .fetchOne(0, long.class);
+            countCache.put(PLAYER_COUNT_CACHE, count);
+            return count;
         } finally {
             database.release(connection);
         }
     }
 
+    @Transactional
     @Override
     public List<Player> players(long offset, long limit) throws SQLException {
+        Cache<Long, List<Player>> pageCache = manager.getCache(PLAYER_PAGE_CACHE);
+        if (pageCache.containsKey(offset))
+            return pageCache.get(offset);
+
         Connection connection = database.getConnection();
         try {
-            return using(connection)
+            List<Player> players = using(connection)
                     .select(field(dictionary.value(PLAYER_NAME_COLUMN)),
                             field(dictionary.value(PLAYER_LEVEL_COLUMN)),
                             field(dictionary.value(PLAYER_EXP_COLUMN)),
                             field(dictionary.value(PLAYER_FAME_COLUMN)),
                             field(dictionary.value(PLAYER_JOB_COLUMN)),
                             field(dictionary.value(PLAYER_GUILD_COLUMN)))
-                    .from(table(field(dictionary.value(PLAYER_TABLE))))
+                    .from(table(dictionary.value(PLAYER_TABLE)))
                     .where(field(dictionary.value(PLAYER_RANK_COLUMN)).gt(Player.PLAYER_UNRANKED))
                     .orderBy(field(dictionary.value(PLAYER_RANK_COLUMN)).asc())
                     .offset(offset)
                     .limit(limit)
                     .fetch(this::mapPlayer);
+            if (!players.isEmpty())
+                pageCache.put(offset, players);
+            return players;
         } finally {
             database.release(connection);
         }
     }
 
-    private Player mapPlayer(Record6 record) {
+    private Player mapPlayer(Record6<Object, Object, Object, Object, Object, Object> record) {
         return Player.builder()
                 .name(record.getValue(dictionary.value(PLAYER_NAME_COLUMN), String.class))
                 .level(record.getValue(dictionary.value(PLAYER_LEVEL_COLUMN), Integer.class))

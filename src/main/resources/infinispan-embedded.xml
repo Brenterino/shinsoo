@@ -1,0 +1,24 @@
+<!--
+    Infinispan Cache Configuration
+
+    DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING!
+-->
+<infinispan>
+    <cache-container name="Shinsoo" default-cache="default">
+        <local-cache-configuration name="PaginatedCacheConfig">
+            <!-- If no results are retrieved for 5 minutes, purge cache; otherwise, purge entry after 30 minutes -->
+            <expiration lifespan="1800000" max-idle="300000"/>
+            <transaction transaction-manager-lookup="org.infinispan.transaction.lookup.JBossStandaloneJTAManagerLookup"/>
+        </local-cache-configuration>
+
+        <!-- Needed for Infinispan CDI to work, even if we do not use it -->
+        <local-cache name="default"/>
+
+        <!-- Post Caches -->
+        <local-cache name="PostCountCache" configuration="PaginatedCacheConfig"/>
+        <local-cache name="PostPageCache"  configuration="PaginatedCacheConfig"/>
+        <!-- Player Caches -->
+        <local-cache name="PlayerCountCache" configuration="PaginatedCacheConfig"/>
+        <local-cache name="PlayerPageCache"  configuration="PaginatedCacheConfig"/>
+    </cache-container>
+</infinispan>

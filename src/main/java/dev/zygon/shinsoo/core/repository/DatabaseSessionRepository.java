@@ -9,6 +9,7 @@ import org.jooq.Record3;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -20,7 +21,7 @@ import static org.jooq.impl.DSL.using;
 @ApplicationScoped
 public class DatabaseSessionRepository implements SessionRepository {
 
-    private static long HOURS_TO_MILLISECONDS = 3600000;
+    private static final long HOURS_TO_MILLISECONDS = 3600000;
 
     @Inject
     Database database;
@@ -31,6 +32,7 @@ public class DatabaseSessionRepository implements SessionRepository {
     @ConfigProperty(name = "session.expiration.hours", defaultValue = "72")
     long expirationHours;
 
+    @Transactional
     @Override
     public boolean sessionActive(String nonce) throws SQLException {
         Connection connection = database.getConnection();
@@ -48,6 +50,7 @@ public class DatabaseSessionRepository implements SessionRepository {
         }
     }
 
+    @Transactional
     @Override
     public UserStatus session(String nonce) throws SQLException {
         Connection connection = database.getConnection();
@@ -66,7 +69,7 @@ public class DatabaseSessionRepository implements SessionRepository {
         }
     }
 
-    private UserStatus mapStatus(Record3 record) {
+    private UserStatus mapStatus(Record3<Object, Object, Object> record) {
         return UserStatus.builder()
                 .username(record.getValue(dictionary.value(SESSION_USERNAME_COLUMN), String.class))
                 .mapleId(record.getValue(dictionary.value(SESSION_MAPLE_ID_COLUMN), String.class))
@@ -75,6 +78,7 @@ public class DatabaseSessionRepository implements SessionRepository {
                 .build();
     }
 
+    @Transactional
     @Override
     public boolean beginSession(String nonce, UserStatus status) throws SQLException {
         Connection connection = database.getConnection();
@@ -99,6 +103,7 @@ public class DatabaseSessionRepository implements SessionRepository {
         return expirationHours * HOURS_TO_MILLISECONDS;
     }
 
+    @Transactional
     @Override
     public boolean endSession(String nonce) throws SQLException {
         Connection connection = database.getConnection();

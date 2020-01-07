@@ -8,6 +8,7 @@ import org.jooq.Record5;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -25,6 +26,7 @@ public class DatabaseUserRepository implements UserRepository {
     @Inject
     DSLDictionary dictionary;
 
+    @Transactional
     @Override
     public boolean userExists(String username) throws SQLException {
         Connection connection = database.getConnection();
@@ -40,6 +42,7 @@ public class DatabaseUserRepository implements UserRepository {
         }
     }
 
+    @Transactional
     @Override
     public boolean idExists(String id) throws SQLException {
         Connection connection = database.getConnection();
@@ -55,6 +58,7 @@ public class DatabaseUserRepository implements UserRepository {
         }
     }
 
+    @Transactional
     @Override
     public boolean emailExists(String email) throws SQLException {
         Connection connection = database.getConnection();
@@ -70,6 +74,7 @@ public class DatabaseUserRepository implements UserRepository {
         }
     }
 
+    @Transactional
     @Override
     public boolean create(UserDetails details) throws SQLException {
         Connection connection = database.getConnection();
@@ -88,6 +93,7 @@ public class DatabaseUserRepository implements UserRepository {
         }
     }
 
+    @Transactional
     @Override
     public UserDetails detailsForEmail(String email) throws SQLException {
         Connection connection = database.getConnection();
@@ -106,7 +112,7 @@ public class DatabaseUserRepository implements UserRepository {
         }
     }
 
-    private UserDetails mapDetails(Record5 record) {
+    private UserDetails mapDetails(Record5<Object, Object, Object, Object, Object> record) {
         return UserDetails.builder()
                 .username(record.getValue(dictionary.value(USER_USERNAME_COLUMN), String.class))
                 .mapleId(record.getValue(dictionary.value(USER_MAPLE_ID_COLUMN), String.class))

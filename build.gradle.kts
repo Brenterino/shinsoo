@@ -14,7 +14,10 @@ repositories {
 
 dependencies {
     implementation(enforcedPlatform("io.quarkus:quarkus-bom:1.1.0.Final"))
+    implementation("io.quarkus:quarkus-undertow")
+    implementation("io.quarkus:quarkus-narayana-jta")
     implementation("io.quarkus:quarkus-rest-client")
+    implementation("io.quarkus:quarkus-infinispan-embedded")
     implementation("io.quarkus:quarkus-resteasy")
     implementation("io.quarkus:quarkus-resteasy-jackson")
     implementation("org.jboss.resteasy:resteasy-multipart-provider")
