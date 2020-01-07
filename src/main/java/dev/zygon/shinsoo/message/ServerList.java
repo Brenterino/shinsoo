@@ -1,5 +1,6 @@
 package dev.zygon.shinsoo.message;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServerList {
+
+    @Builder.Default
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("alert")
+    private String bannerMessage = null;
 
     @Builder.Default
     @JsonProperty("online_count")
