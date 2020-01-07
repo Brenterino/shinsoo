@@ -34,4 +34,72 @@ public class RankingServiceController implements RankingController {
         return Response.ok(service.rankings(page))
                 .build();
     }
+
+    @Override
+    @GET
+    @Path("/overall")
+    public Response overallRankings() {
+        return overallRankings(Paginated.DEFAULT_PAGE);
+    }
+
+    @Override
+    @GET
+    @Path("/overall/{page}")
+    public Response overallRankings(@PathParam("page") long page) {
+        return rankings(page);
+    }
+
+    @Override
+    @GET
+    @Path("/job")
+    public Response jobRankings() {
+        // TODO Return paginated error from service
+        return null;
+    }
+
+    @Override
+    @GET
+    @Path("/job/{job}")
+    public Response jobRankings(@PathParam("job") String job) {
+        return jobRankings(job, Paginated.DEFAULT_PAGE);
+    }
+
+    @Override
+    @GET
+    @Path("/job/{job}/{page}")
+    public Response jobRankings(@PathParam("job") String job, @PathParam("page") long page) {
+        // TODO implement
+        return null;
+    }
+
+    @Override
+    @GET
+    @Path("/fame")
+    public Response fameRankings() {
+        return fameRankings(Paginated.DEFAULT_PAGE);
+    }
+
+    @Override
+    @GET
+    @Path("/fame/{page}")
+    public Response fameRankings(@PathParam("page") long page) {
+        // TODO implement
+        return null;
+    }
+
+    @Override
+    @GET
+    @Path("/search")
+    public Response searchRankings() {
+        return null; // return nothing :)
+    }
+
+    @Override
+    @GET
+    @Path("/search/{query}")
+    public Response searchRankings(@PathParam("query") String query) {
+        // TODO implement
+        //  note: does not return a paginated result set
+        return null;
+    }
 }
