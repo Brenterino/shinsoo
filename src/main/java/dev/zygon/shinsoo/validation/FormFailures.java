@@ -16,8 +16,12 @@ public enum FormFailures {
     CONFIRMATION_EMPTY("Password confirmation must not be empty."),
     TOKEN_CHALLENGE_INCOMPLETE("Please complete the reCAPTCHA challenge."),
     TOKEN_CHALLENGE_INVALID("reCAPTCHA challenge is invalid. Please try again."),
+    NAME_SIZE_OUT_OF_BOUNDS("Provided name is either too long or too short."),
+    MAPLE_ID_SIZE_OUT_OF_BOUNDS("Provided MapleID is either too long or too short."),
+    PASSWORD_SIZE_OUT_OF_BOUNDS("Provided password is either too long or too short."),
+    INVALID_EMAIL("Provided email is not valid."),
     CONFIRMATION_FAILED("Passwords do not match."),
-    NONE("")
+    NONE(""),
     ;
 
     private String message;

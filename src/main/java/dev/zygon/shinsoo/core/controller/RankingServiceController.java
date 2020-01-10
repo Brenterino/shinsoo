@@ -53,8 +53,8 @@ public class RankingServiceController implements RankingController {
     @GET
     @Path("/job")
     public Response jobRankings() {
-        // TODO Return paginated error from service
-        return null;
+        return Response.ok(service.jobRankings("", 0))
+                .build();
     }
 
     @Override
@@ -68,8 +68,8 @@ public class RankingServiceController implements RankingController {
     @GET
     @Path("/job/{job}/{page}")
     public Response jobRankings(@PathParam("job") String job, @PathParam("page") long page) {
-        // TODO implement
-        return null;
+        return Response.ok(service.jobRankings(job, page))
+                .build();
     }
 
     @Override
@@ -83,8 +83,8 @@ public class RankingServiceController implements RankingController {
     @GET
     @Path("/fame/{page}")
     public Response fameRankings(@PathParam("page") long page) {
-        // TODO implement
-        return null;
+        return Response.ok(service.fameRankings(page))
+                .build();
     }
 
     @Override
@@ -98,8 +98,7 @@ public class RankingServiceController implements RankingController {
     @GET
     @Path("/search/{query}")
     public Response searchRankings(@PathParam("query") String query) {
-        // TODO implement
-        //  note: does not return a paginated result set
-        return null;
+        return Response.ok(service.searchRankings(query))
+                .build();
     }
 }

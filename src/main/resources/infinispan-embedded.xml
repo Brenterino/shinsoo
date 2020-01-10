@@ -18,7 +18,10 @@
         <local-cache name="PostCountCache" configuration="PaginatedCacheConfig"/>
         <local-cache name="PostPageCache"  configuration="PaginatedCacheConfig"/>
         <!-- Player Caches -->
-        <local-cache name="PlayerCountCache" configuration="PaginatedCacheConfig"/>
-        <local-cache name="PlayerPageCache"  configuration="PaginatedCacheConfig"/>
+        <local-cache name="PlayerCountCache"    configuration="PaginatedCacheConfig"/>
+        <local-cache name="PlayerPageCache"     configuration="PaginatedCacheConfig"/>
+        <local-cache name="PlayerFameCache"     configuration="PaginatedCacheConfig"/>
+        <local-cache name="PlayerJobCountCache" configuration="PaginatedCacheConfig"/>
+        <local-cache name="PlayerJobPageCache"  configuration="PaginatedCacheConfig"/>
     </cache-container>
 </infinispan>
