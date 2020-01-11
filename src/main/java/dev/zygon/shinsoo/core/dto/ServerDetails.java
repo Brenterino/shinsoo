@@ -15,44 +15,30 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-package dev.zygon.shinsoo.message;
+package dev.zygon.shinsoo.core.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * Represents status of the user accessing the site.  This
- * contains session information that the backend has verified
- * for the user and allows the front end to enable certain
- * content.
+ * Data object which is used to transfer details of a server from the
+ * database to a service that can process it or use the results for
+ * a response message.
  *
  * @author Brenterino
  * @since 1.0.0.1
  * @version 1.0.0.1
  */
 @Data
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserStatus {
+public class ServerDetails {
 
-    @JsonIgnore
-    public static final int LOGGED_OUT_STATUS = 0;
-
-    @Builder.Default
-    @JsonProperty("logged_in")
-    private boolean loggedIn = false;
-
-    @Builder.Default
-    private String username = "";
-
-    @Builder.Default
-    @JsonProperty("mapleid")
-    private String mapleId = "";
-
-    @Builder.Default
-    @JsonProperty("gm_level")
-    private int gmLevel = 0;
+    private long id;
+    private String name;
+    private String ip;
+    private int port;
 }

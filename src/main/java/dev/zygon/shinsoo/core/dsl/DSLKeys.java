@@ -33,6 +33,7 @@ public class DSLKeys {
     public static final String USER_PASSWORD_COLUMN = "user.password.column";
     public static final String USER_EMAIL_COLUMN = "user.email.column";
     public static final String USER_GM_LEVEL_COLUMN = "user.gm.level.column";
+    public static final String USER_LOGIN_STATUS_COLUMN = "user.login.status.column";
 
     public static final String PLAYER_TABLE = "player.table";
     public static final String PLAYER_RANK_COLUMN = "player.rank.column";
@@ -63,4 +64,10 @@ public class DSLKeys {
     public static final String POST_CREATED_COLUMN = "post.created.column";
     public static final String POST_UPDATED_COLUMN = "post.updated.column";
     public static final String POST_CONTENT_COLUMN = "post.content.column";
+
+    public static final String SERVER_TABLE = "server.table";
+    public static final String SERVER_ID_COLUMN = "server.id.column";
+    public static final String SERVER_NAME_COLUMN = "server.name.column";
+    public static final String SERVER_IP_COLUMN = "server.ip.column";
+    public static final String SERVER_PORT_COLUMN = "server.port.column";
 }

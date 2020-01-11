@@ -5,6 +5,7 @@
   "user.password.column": "password",
   "user.email.column": "email",
   "user.gm.level.column": "gm_level",
+  "user.login.status.column": "status",
 
   "player.table": "player",
   "player.rank.column": "rank",
@@ -34,5 +35,11 @@
   "post.author.column": "author",
   "post.created.column": "created",
   "post.updated.column": "updated",
-  "post.content.column": "content"
+  "post.content.column": "content",
+
+  "server.table": "server",
+  "server.id.column": "id",
+  "server.name.column": "name",
+  "server.ip.column": "ip",
+  "server.port.column": "port"
 }

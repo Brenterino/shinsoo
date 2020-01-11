@@ -21,13 +21,15 @@ import dev.zygon.shinsoo.core.dto.UserDetails;
 
 /**
  * Represents a data source that contains information about user
- * details that exist.
+ * details.
  *
  * @author Brenterino
  * @since 1.0.0.1
  * @version 1.0.0.1
  */
 public interface UserRepository {
+
+    long usersOnline() throws Exception;
 
     boolean userExists(String username) throws Exception;
 

@@ -15,40 +15,20 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-package dev.zygon.shinsoo.message;
+package dev.zygon.shinsoo.repository;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import dev.zygon.shinsoo.message.Server;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
- * Payload which contains a list of players when the request was
- * successful or an error message when it failed.  Resulting list
- * is not paginated and payload may be very large.
+ * Represents a data source that contains server information.
  *
  * @author Brenterino
  * @since 1.0.0.1
  * @version 1.0.0.1
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ServerList {
+public interface ServerRepository {
 
-    @Builder.Default
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonProperty("alert")
-    private String bannerMessage = null;
-
-    @Builder.Default
-    @JsonProperty("online_count")
-    private long online = 0;
-
-    @Builder.Default
-    @JsonProperty("server_status")
-    private List<Server> statuses = Collections.emptyList();
+    List<Server> servers() throws Exception;
 }

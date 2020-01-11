@@ -19,8 +19,11 @@ package dev.zygon.shinsoo.core.repository;
 
 import dev.zygon.shinsoo.dsl.DSLDictionary;
 import dev.zygon.shinsoo.core.dto.UserDetails;
+import dev.zygon.shinsoo.message.UserStatus;
 import dev.zygon.shinsoo.repository.UserRepository;
 import dev.zygon.shinsoo.database.Database;
+import org.infinispan.Cache;
+import org.infinispan.manager.EmbeddedCacheManager;
 import org.jooq.Record5;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -46,11 +49,37 @@ import static org.jooq.impl.DSL.*;
 @ApplicationScoped
 public class DatabaseUserRepository implements UserRepository {
 
+    private static final String USERS_ONLINE_CACHE = "UsersOnlineCache";
+
     @Inject
     Database database;
 
     @Inject
     DSLDictionary dictionary;
+
+    @Inject
+    EmbeddedCacheManager manager;
+
+    @Transactional
+    @Override
+    public long usersOnline() throws Exception {
+        Cache<String, Long> cache = manager.getCache(USERS_ONLINE_CACHE);
+        if (cache.containsKey(USERS_ONLINE_CACHE))
+            return cache.get(USERS_ONLINE_CACHE);
+
+        Connection connection = database.getConnection();
+        try {
+            long online = using(connection)
+                    .selectCount()
+                    .from(table(dictionary.value(USER_TABLE)))
+                    .where(field(dictionary.value(USER_LOGIN_STATUS_COLUMN)).ne(UserStatus.LOGGED_OUT_STATUS))
+                    .fetchOne(0, long.class);
+            cache.put(USERS_ONLINE_CACHE, online);
+            return online;
+        } finally {
+            database.release(connection);
+        }
+    }
 
     @Transactional
     @Override
