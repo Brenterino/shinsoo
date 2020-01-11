@@ -23,24 +23,33 @@
 -->
 <infinispan>
     <cache-container name="Shinsoo" default-cache="default">
-        <local-cache-configuration name="CacheConfig">
-            <!-- If no results are retrieved for 5 minutes, purge cache; otherwise, purge entry after 30 minutes -->
-            <expiration lifespan="1800000" max-idle="300000"/>
+        <local-cache-configuration name="ShortTermCache">
+            <!-- Purge entry every minute -->
+            <expiration lifespan="60000"/>
+            <transaction transaction-manager-lookup="org.infinispan.transaction.lookup.JBossStandaloneJTAManagerLookup"/>
+        </local-cache-configuration>
+        <local-cache-configuration name="LongTermCache">
+            <!-- If no results are retrieved for 5 minutes, purge cache; otherwise, purge entry after 10 minutes -->
+            <expiration lifespan="600000" max-idle="300000"/>
             <transaction transaction-manager-lookup="org.infinispan.transaction.lookup.JBossStandaloneJTAManagerLookup"/>
         </local-cache-configuration>
 
         <!-- Needed for Infinispan CDI to work, even if we do not use it -->
         <local-cache name="default"/>
 
+        <!-- User Caches -->
+        <local-cache name="UsersOnlineCache" configuration="ShortTermCache"/>
+        <!-- Server Status Caches -->
+        <local-cache name="ServerStatusCache" configuration="ShortTermCache"/>
         <!-- Post Caches -->
-        <local-cache name="PostCache"      configuration="CacheConfig"/>
-        <local-cache name="PostCountCache" configuration="CacheConfig"/>
-        <local-cache name="PostPageCache"  configuration="CacheConfig"/>
+        <local-cache name="PostCache"      configuration="LongTermCache"/>
+        <local-cache name="PostCountCache" configuration="LongTermCache"/>
+        <local-cache name="PostPageCache"  configuration="LongTermCache"/>
         <!-- Player Caches -->
-        <local-cache name="PlayerCountCache"    configuration="CacheConfig"/>
-        <local-cache name="PlayerPageCache"     configuration="CacheConfig"/>
-        <local-cache name="PlayerFameCache"     configuration="CacheConfig"/>
-        <local-cache name="PlayerJobCountCache" configuration="CacheConfig"/>
-        <local-cache name="PlayerJobPageCache"  configuration="CacheConfig"/>
+        <local-cache name="PlayerCountCache"    configuration="LongTermCache"/>
+        <local-cache name="PlayerPageCache"     configuration="LongTermCache"/>
+        <local-cache name="PlayerFameCache"     configuration="LongTermCache"/>
+        <local-cache name="PlayerJobCountCache" configuration="LongTermCache"/>
+        <local-cache name="PlayerJobPageCache"  configuration="LongTermCache"/>
     </cache-container>
 </infinispan>

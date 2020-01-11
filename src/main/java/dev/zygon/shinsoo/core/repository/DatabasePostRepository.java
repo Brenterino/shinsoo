@@ -115,7 +115,7 @@ public class DatabasePostRepository implements PostRepository {
     }
 
     private void updateSinglePostViewCount(long id, long views) {
-        Cache<Long, Post> postCache = manager.getCache(POST_PAGE_CACHE);
+        Cache<Long, Post> postCache = manager.getCache(POST_CACHE);
         if (postCache.containsKey(id))
             postCache.get(id).setViews(views);
     }
