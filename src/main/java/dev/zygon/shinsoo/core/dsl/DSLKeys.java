@@ -41,7 +41,11 @@ public class DSLKeys {
     public static final String PLAYER_EXP_COLUMN = "player.exp.column";
     public static final String PLAYER_FAME_COLUMN = "player.fame.column";
     public static final String PLAYER_JOB_COLUMN = "player.job.column";
-    public static final String PLAYER_GUILD_COLUMN = "player.guild.column";
+    public static final String PLAYER_GUILD_ID_COLUMN = "player.guild_id.column";
+
+    public static final String GUILD_TABLE = "guild.table";
+    public static final String GUILD_ID_COLUMN = "guild.id.column";
+    public static final String GUILD_NAME_COLUMN = "guild.name.column";
 
     public static final String SESSION_TABLE = "session.table";
     public static final String SESSION_NONCE_COLUMN = "session.nonce.column";

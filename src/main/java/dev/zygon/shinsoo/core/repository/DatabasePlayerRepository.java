@@ -99,13 +99,15 @@ public class DatabasePlayerRepository implements PlayerRepository {
         Connection connection = database.getConnection();
         try {
             List<Player> players = using(connection)
-                    .select(field(dictionary.value(PLAYER_NAME_COLUMN)),
-                            field(dictionary.value(PLAYER_LEVEL_COLUMN)),
-                            field(dictionary.value(PLAYER_EXP_COLUMN)),
-                            field(dictionary.value(PLAYER_FAME_COLUMN)),
-                            field(dictionary.value(PLAYER_JOB_COLUMN)),
-                            field(dictionary.value(PLAYER_GUILD_COLUMN)))
+                    .select(field(name(PLAYER_TABLE, PLAYER_NAME_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_LEVEL_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_EXP_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_FAME_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_JOB_COLUMN)),
+                            field(name(GUILD_TABLE, GUILD_NAME_COLUMN)))
                     .from(table(dictionary.value(PLAYER_TABLE)))
+                    .leftJoin(table(dictionary.value(GUILD_TABLE)))
+                    .on(field(name(PLAYER_TABLE, PLAYER_GUILD_ID_COLUMN)).eq(field(name(GUILD_TABLE, GUILD_ID_COLUMN))))
                     .where(field(dictionary.value(PLAYER_RANK_COLUMN)).gt(Player.PLAYER_UNRANKED))
                     .orderBy(field(dictionary.value(PLAYER_RANK_COLUMN)).asc())
                     .offset(offset)
@@ -128,13 +130,15 @@ public class DatabasePlayerRepository implements PlayerRepository {
         Connection connection = database.getConnection();
         try {
             List<Player> players = using(connection)
-                    .select(field(dictionary.value(PLAYER_NAME_COLUMN)),
-                            field(dictionary.value(PLAYER_LEVEL_COLUMN)),
-                            field(dictionary.value(PLAYER_EXP_COLUMN)),
-                            field(dictionary.value(PLAYER_FAME_COLUMN)),
-                            field(dictionary.value(PLAYER_JOB_COLUMN)),
-                            field(dictionary.value(PLAYER_GUILD_COLUMN)))
+                    .select(field(name(PLAYER_TABLE, PLAYER_NAME_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_LEVEL_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_EXP_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_FAME_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_JOB_COLUMN)),
+                            field(name(GUILD_TABLE, GUILD_NAME_COLUMN)))
                     .from(table(dictionary.value(PLAYER_TABLE)))
+                    .leftJoin(table(dictionary.value(GUILD_TABLE)))
+                    .on(field(name(PLAYER_TABLE, PLAYER_GUILD_ID_COLUMN)).eq(field(name(GUILD_TABLE, GUILD_ID_COLUMN))))
                     .where(field(dictionary.value(PLAYER_RANK_COLUMN)).gt(Player.PLAYER_UNRANKED))
                     .orderBy(field(dictionary.value(PLAYER_FAME_COLUMN)).desc())
                     .offset(offset)
@@ -181,13 +185,15 @@ public class DatabasePlayerRepository implements PlayerRepository {
         Connection connection = database.getConnection();
         try {
             List<Player> players = using(connection)
-                    .select(field(dictionary.value(PLAYER_NAME_COLUMN)),
-                            field(dictionary.value(PLAYER_LEVEL_COLUMN)),
-                            field(dictionary.value(PLAYER_EXP_COLUMN)),
-                            field(dictionary.value(PLAYER_FAME_COLUMN)),
-                            field(dictionary.value(PLAYER_JOB_COLUMN)),
-                            field(dictionary.value(PLAYER_GUILD_COLUMN)))
+                    .select(field(name(PLAYER_TABLE, PLAYER_NAME_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_LEVEL_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_EXP_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_FAME_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_JOB_COLUMN)),
+                            field(name(GUILD_TABLE, GUILD_NAME_COLUMN)))
                     .from(table(dictionary.value(PLAYER_TABLE)))
+                    .leftJoin(table(dictionary.value(GUILD_TABLE)))
+                    .on(field(name(PLAYER_TABLE, PLAYER_GUILD_ID_COLUMN)).eq(field(name(GUILD_TABLE, GUILD_ID_COLUMN))))
                     .where(field(dictionary.value(PLAYER_RANK_COLUMN)).gt(Player.PLAYER_UNRANKED)
                       .and(field(dictionary.value(PLAYER_JOB_COLUMN)).between(range.getStart(), range.getEnd())))
                     .orderBy(field(dictionary.value(PLAYER_RANK_COLUMN)).asc())
@@ -209,13 +215,15 @@ public class DatabasePlayerRepository implements PlayerRepository {
         Connection connection = database.getConnection();
         try {
             return using(connection)
-                    .select(field(dictionary.value(PLAYER_NAME_COLUMN)),
-                            field(dictionary.value(PLAYER_LEVEL_COLUMN)),
-                            field(dictionary.value(PLAYER_EXP_COLUMN)),
-                            field(dictionary.value(PLAYER_FAME_COLUMN)),
-                            field(dictionary.value(PLAYER_JOB_COLUMN)),
-                            field(dictionary.value(PLAYER_GUILD_COLUMN)))
+                    .select(field(name(PLAYER_TABLE, PLAYER_NAME_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_LEVEL_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_EXP_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_FAME_COLUMN)),
+                            field(name(PLAYER_TABLE, PLAYER_JOB_COLUMN)),
+                            field(name(GUILD_TABLE, GUILD_NAME_COLUMN)))
                     .from(table(dictionary.value(PLAYER_TABLE)))
+                    .leftJoin(table(dictionary.value(GUILD_TABLE)))
+                    .on(field(name(PLAYER_TABLE, PLAYER_GUILD_ID_COLUMN)).eq(field(name(GUILD_TABLE, GUILD_ID_COLUMN))))
                     .where(field(dictionary.value(PLAYER_RANK_COLUMN)).gt(Player.PLAYER_UNRANKED)
                       .and(field(dictionary.value(PLAYER_NAME_COLUMN)).like(query)))
                     .orderBy(field(dictionary.value(PLAYER_RANK_COLUMN)).asc())
@@ -227,12 +235,16 @@ public class DatabasePlayerRepository implements PlayerRepository {
 
     private Player mapPlayer(Record6<Object, Object, Object, Object, Object, Object> record) {
         return Player.builder()
-                .name(record.getValue(dictionary.value(PLAYER_NAME_COLUMN), String.class))
-                .level(record.getValue(dictionary.value(PLAYER_LEVEL_COLUMN), Integer.class))
-                .exp(record.getValue(dictionary.value(PLAYER_EXP_COLUMN), Long.class))
-                .fame(record.getValue(dictionary.value(PLAYER_FAME_COLUMN), Long.class))
-                .job(record.getValue(dictionary.value(PLAYER_JOB_COLUMN), Long.class))
-                .guild(record.getValue(dictionary.value(PLAYER_GUILD_COLUMN), String.class))
+                .name(record.getValue(name(PLAYER_TABLE, PLAYER_NAME_COLUMN), String.class))
+                .level(record.getValue(name(PLAYER_TABLE, PLAYER_LEVEL_COLUMN), Integer.class))
+                .exp(record.getValue(name(PLAYER_TABLE, PLAYER_EXP_COLUMN), Long.class))
+                .fame(record.getValue(name(PLAYER_TABLE, PLAYER_FAME_COLUMN), Long.class))
+                .job(record.getValue(name(PLAYER_TABLE, PLAYER_JOB_COLUMN), Long.class))
+                .guild(record.getValue(name(GUILD_TABLE, GUILD_NAME_COLUMN), String.class))
                 .build();
+    }
+
+    private String name(String table, String key) {
+        return dictionary.value(table) + "." + dictionary.value(key);
     }
 }

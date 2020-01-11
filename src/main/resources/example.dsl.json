@@ -13,7 +13,11 @@
   "player.exp.column": "exp",
   "player.fame.column": "fame",
   "player.job.column": "job",
-  "player.guild.column": "guild",
+  "player.guild_id.column": "guild_id",
+
+  "guild.table": "guild",
+  "guild.id.column": "id",
+  "guild.name.column": "name",
 
   "session.table": "session",
   "session.nonce.column": "nonce",
