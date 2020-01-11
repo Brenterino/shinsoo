@@ -17,25 +17,28 @@
 */
 package dev.zygon.shinsoo.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Data object which contains information about an individual
- * server.
+ * Payload which contains a page of posts in a list.
  *
  * @author Brenterino
  * @since 1.0.0.1
  * @version 1.0.0.1
  */
 @Data
-@Builder
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Server {
+public class PostListPage extends Paginated {
 
     @Builder.Default
-    private String name = "";
-
-    @Builder.Default
-    private boolean status = false;
+    @JsonProperty("data")
+    private List<Post> posts = Collections.emptyList();
 }

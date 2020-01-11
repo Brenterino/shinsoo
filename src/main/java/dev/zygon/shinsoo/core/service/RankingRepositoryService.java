@@ -1,3 +1,20 @@
+/*
+    Shinsoo: Java-Quarkus Back End for Aria
+    Copyright (C) 2020  Brenterino <brent@zygon.dev>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 package dev.zygon.shinsoo.core.service;
 
 import dev.zygon.shinsoo.message.*;
@@ -12,6 +29,16 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 
+/**
+ * Implementation for {@link RankingService} which utilizes
+ * {@link PlayerRepository} to retrieve players from a data
+ * repository.  Generates response messages based on the
+ * data retrieved from the repository.
+ *
+ * @author Brenterino
+ * @since 1.0.0.1
+ * @version 1.0.0.1
+ */
 @Slf4j
 @ApplicationScoped
 public class RankingRepositoryService implements RankingService {
@@ -38,7 +65,7 @@ public class RankingRepositoryService implements RankingService {
             }
         } catch (Exception ex) {
             log.error("Unable to load paginated rankings from repository.", ex);
-            return createFailedPagination("Something went wrong when loading from the database!");
+            return createFailedPagination("Unable to load rankings. Please try again later.");
         }
     }
 
@@ -59,7 +86,7 @@ public class RankingRepositoryService implements RankingService {
             }
         } catch (Exception ex) {
             log.error("Unable to load paginated job rankings from repository.", ex);
-            return createFailedPagination("Something went wrong when loading from the database!");
+            return createFailedPagination("Unable to load rankings. Please try again later.");
         }
     }
 
@@ -76,7 +103,7 @@ public class RankingRepositoryService implements RankingService {
             }
         } catch (Exception ex) {
             log.error("Unable to load paginated job rankings from repository.", ex);
-            return createFailedPagination("Something went wrong when loading from the database!");
+            return createFailedPagination("Unable to load rankings. Please try again later.");
         }
     }
 
@@ -99,9 +126,9 @@ public class RankingRepositoryService implements RankingService {
     }
 
     @Override
-    public PlayerListPayload searchRankings(String query) {
+    public PlayerList searchRankings(String query) {
         if (query.length() < minimumQuerySize || query.length() > maximumQuerySize)
-            return createFailedPayload(String.format("Character name must be between %d and %d.",
+            return createFailedPayload(String.format("Character name length must be between %d and %d.",
                     minimumQuerySize,
                     maximumQuerySize));
 
@@ -112,19 +139,19 @@ public class RankingRepositoryService implements RankingService {
             return createPayloadResults(players);
         } catch (Exception ex) {
             log.error("Unable to search for player(s) from repository.", ex);
-            return createFailedPayload("Something went wrong when loading from the database!");
+            return createFailedPayload("Unable to find players. Please try again later.");
         }
     }
 
-    private PlayerListPayload createPayloadResults(List<Player> players) {
-        return PlayerListPayload.builder()
+    private PlayerList createPayloadResults(List<Player> players) {
+        return PlayerList.builder()
                 .success(true)
                 .players(players)
                 .build();
     }
 
-    private PlayerListPayload createFailedPayload(String message) {
-        return PlayerListPayload.builder()
+    private PlayerList createFailedPayload(String message) {
+        return PlayerList.builder()
                 .success(false)
                 .error(singletonList(message))
                 .build();

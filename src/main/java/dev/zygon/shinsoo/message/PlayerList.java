@@ -17,11 +17,17 @@
 */
 package dev.zygon.shinsoo.message;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
- * Data object which contains information about an individual
- * server.
+ * Payload which contains a list of players when the request was
+ * successful or an error message when it failed.  Resulting list
+ * is not paginated and payload may be very large.
  *
  * @author Brenterino
  * @since 1.0.0.1
@@ -31,11 +37,17 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Server {
+public class PlayerList {
 
     @Builder.Default
-    private String name = "";
+    private boolean success = false;
 
     @Builder.Default
-    private boolean status = false;
+    @JsonProperty("data")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<Player> players = Collections.emptyList();
+
+    @Builder.Default
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<String> error = Collections.emptyList();
 }
