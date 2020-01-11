@@ -19,9 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static dev.zygon.shinsoo.core.dsl.DSLKeys.*;
-import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.table;
-import static org.jooq.impl.DSL.using;
+import static org.jooq.impl.DSL.*;
 
 @ApplicationScoped
 public class DatabasePlayerRepository implements PlayerRepository {

@@ -8,8 +8,8 @@ plugins {
 }
 
 repositories {
-     mavenLocal()
-     mavenCentral()
+    mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
@@ -21,16 +21,23 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy")
     implementation("io.quarkus:quarkus-resteasy-jackson")
     implementation("org.jboss.resteasy:resteasy-multipart-provider")
+    implementation("io.quarkus:quarkus-jdbc-mysql")
 
-    implementation("org.mindrot:jbcrypt:0.4")
     implementation("com.zaxxer:HikariCP:3.4.1")
     implementation("org.jooq:jooq:3.12.3")
+    implementation("org.mindrot:jbcrypt:0.4")
 
-    implementation("io.quarkus:quarkus-jdbc-mysql")
     runtimeOnly("mysql:mysql-connector-java:8.0.18")
 
     testImplementation("io.quarkus:quarkus-junit5")
-    testImplementation("io.rest-assured:rest-assured")
+    testImplementation("org.mockito:mockito-junit-jupiter:3.1.0")
+}
+
+configurations.all {
+    exclude("jakarta.xml.bind", "jakarta.xml.bind-api")
+    exclude("javax.activation", "javax.activation-api")
+    exclude("javax.xml.bind", "jaxb-api")
+    exclude("org.jboss.spec.javax.interceptor", "jboss-interceptors-api_1.2_spec")
 }
 
 tasks {
@@ -43,4 +50,3 @@ java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
-

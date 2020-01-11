@@ -3,26 +3,31 @@ package dev.zygon.shinsoo.core.service;
 import dev.zygon.shinsoo.message.Paginated;
 import dev.zygon.shinsoo.message.Post;
 import dev.zygon.shinsoo.message.PostList;
+import dev.zygon.shinsoo.message.PostPayload;
 import dev.zygon.shinsoo.repository.PostRepository;
-import dev.zygon.shinsoo.service.NewsService;
+import dev.zygon.shinsoo.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 
 @Slf4j
 @ApplicationScoped
-public class NewsRepositoryService implements NewsService {
+public class PostRepositoryService implements PostService {
 
     @Inject
     PostRepository repository;
 
     @Override
-    public Paginated news(long page) {
+    public PostPayload post(long id) {
+        return null;
+    }
+
+    @Override
+    public Paginated posts(long page) {
         try {
             long totalPages = (long) Math.ceil(repository.count() / (double) Paginated.DEFAULT_PAGE_SIZE);
             if (page < 0 || page > totalPages)

@@ -1,7 +1,6 @@
 package dev.zygon.shinsoo.message;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import java.util.Collections;
@@ -11,15 +10,18 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class JoinResponse {
+public class PostPayload {
+
+    @JsonIgnore
+    public static final int UNKNOWN_POST = 0;
 
     @Builder.Default
     private boolean success = false;
 
     @Builder.Default
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("data")
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<String> response = Collections.emptyList();
+    private Post post = null;
 
     @Builder.Default
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

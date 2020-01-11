@@ -16,13 +16,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static dev.zygon.shinsoo.core.dsl.DSLKeys.*;
-import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.table;
-import static org.jooq.impl.DSL.using;
+import static org.jooq.impl.DSL.*;
 
 @ApplicationScoped
 public class DatabasePostRepository implements PostRepository {
 
+    private static final String POST_CACHE = "PostCache";
     private static final String POST_COUNT_CACHE = "PostCountCache";
     private static final String POST_PAGE_CACHE = "PostPageCache";
 
@@ -34,6 +33,35 @@ public class DatabasePostRepository implements PostRepository {
 
     @Inject
     EmbeddedCacheManager manager;
+
+    @Transactional
+    @Override
+    public Post post(long id) throws Exception {
+        Cache<Long, Post> postCache = manager.getCache(POST_CACHE);
+        if (postCache.containsKey(id))
+            return postCache.get(id);
+
+        Connection connection = database.getConnection();
+        try {
+            Post post = using(connection)
+                    .select(field(dictionary.value(POST_ID_COLUMN)),
+                            field(dictionary.value(POST_TYPE_COLUMN)),
+                            field(dictionary.value(POST_VIEWS_COLUMN)),
+                            field(dictionary.value(POST_TITLE_COLUMN)),
+                            field(dictionary.value(POST_AUTHOR_COLUMN)),
+                            field(dictionary.value(POST_CREATED_COLUMN)),
+                            field(dictionary.value(POST_UPDATED_COLUMN)),
+                            field(dictionary.value(POST_CONTENT_COLUMN)))
+                    .from(table(dictionary.value(POST_TABLE)))
+                    .where(field(dictionary.value(POST_ID_COLUMN)).eq(id))
+                    .fetchOne(this::mapPost);
+            if (post != null)
+                postCache.put(id, post);
+            return post;
+        } finally {
+            database.release(connection);
+        }
+    }
 
     @Transactional
     @Override

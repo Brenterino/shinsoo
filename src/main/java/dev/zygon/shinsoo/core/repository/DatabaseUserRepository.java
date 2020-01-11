@@ -13,9 +13,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import static dev.zygon.shinsoo.core.dsl.DSLKeys.*;
-import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.table;
-import static org.jooq.impl.DSL.using;
+import static org.jooq.impl.DSL.*;
 
 @ApplicationScoped
 public class DatabaseUserRepository implements UserRepository {

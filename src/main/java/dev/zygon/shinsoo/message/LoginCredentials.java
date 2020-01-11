@@ -3,9 +3,7 @@ package dev.zygon.shinsoo.message;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MediaType;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.jboss.resteasy.annotations.providers.multipart.PartType;
 
 @Data

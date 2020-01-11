@@ -5,7 +5,7 @@
 -->
 <infinispan>
     <cache-container name="Shinsoo" default-cache="default">
-        <local-cache-configuration name="PaginatedCacheConfig">
+        <local-cache-configuration name="CacheConfig">
             <!-- If no results are retrieved for 5 minutes, purge cache; otherwise, purge entry after 30 minutes -->
             <expiration lifespan="1800000" max-idle="300000"/>
             <transaction transaction-manager-lookup="org.infinispan.transaction.lookup.JBossStandaloneJTAManagerLookup"/>
@@ -15,13 +15,14 @@
         <local-cache name="default"/>
 
         <!-- Post Caches -->
-        <local-cache name="PostCountCache" configuration="PaginatedCacheConfig"/>
-        <local-cache name="PostPageCache"  configuration="PaginatedCacheConfig"/>
+        <local-cache name="PostCache"      configuration="CacheConfig"/>
+        <local-cache name="PostCountCache" configuration="CacheConfig"/>
+        <local-cache name="PostPageCache"  configuration="CacheConfig"/>
         <!-- Player Caches -->
-        <local-cache name="PlayerCountCache"    configuration="PaginatedCacheConfig"/>
-        <local-cache name="PlayerPageCache"     configuration="PaginatedCacheConfig"/>
-        <local-cache name="PlayerFameCache"     configuration="PaginatedCacheConfig"/>
-        <local-cache name="PlayerJobCountCache" configuration="PaginatedCacheConfig"/>
-        <local-cache name="PlayerJobPageCache"  configuration="PaginatedCacheConfig"/>
+        <local-cache name="PlayerCountCache"    configuration="CacheConfig"/>
+        <local-cache name="PlayerPageCache"     configuration="CacheConfig"/>
+        <local-cache name="PlayerFameCache"     configuration="CacheConfig"/>
+        <local-cache name="PlayerJobCountCache" configuration="CacheConfig"/>
+        <local-cache name="PlayerJobPageCache"  configuration="CacheConfig"/>
     </cache-container>
 </infinispan>

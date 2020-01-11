@@ -1,7 +1,7 @@
 package dev.zygon.shinsoo.core.controller;
 
-import dev.zygon.shinsoo.controller.NewsController;
-import dev.zygon.shinsoo.message.Paginated;
+import dev.zygon.shinsoo.controller.PostController;
+import dev.zygon.shinsoo.message.PostPayload;
 import dev.zygon.shinsoo.service.PostService;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -11,24 +11,24 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @ApplicationScoped
-@Path("/news")
+@Path("/post")
 @Produces(MediaType.APPLICATION_JSON)
-public class NewsServiceController implements NewsController {
+public class PostServiceController implements PostController {
 
     @Inject
     PostService service;
 
     @Override
     @GET
-    public Response news() {
-        return news(Paginated.DEFAULT_PAGE);
+    public Response post() {
+        return post(PostPayload.UNKNOWN_POST);
     }
 
     @Override
     @GET
-    @Path("/{page}")
-    public Response news(@PathParam("page") long page) {
-        return Response.ok(service.posts(page))
+    @Path("/{id}")
+    public Response post(@PathParam("id") long id) {
+        return Response.ok(service.post(id))
                 .build();
     }
 }
