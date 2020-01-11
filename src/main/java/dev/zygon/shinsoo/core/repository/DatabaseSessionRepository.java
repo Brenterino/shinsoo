@@ -47,16 +47,11 @@ import static org.jooq.impl.DSL.*;
 @ApplicationScoped
 public class DatabaseSessionRepository implements SessionRepository {
 
-    private static final long HOURS_TO_MILLISECONDS = 3600000;
-
     @Inject
     Database database;
 
     @Inject
     DSLDictionary dictionary;
-
-    @ConfigProperty(name = "session.expiration.hours", defaultValue = "72")
-    long expirationHours;
 
     @Transactional
     @Override
@@ -106,10 +101,10 @@ public class DatabaseSessionRepository implements SessionRepository {
 
     @Transactional
     @Override
-    public boolean beginSession(String nonce, UserStatus status) throws SQLException {
+    public boolean beginSession(String nonce, UserStatus status, long expirationMillis) throws SQLException {
         Connection connection = database.getConnection();
         try {
-            long expirationTime = System.currentTimeMillis() + expirationHoursToMilliseconds();
+            long expirationTime = System.currentTimeMillis() + expirationMillis;
             int rowsInserted = using(connection)
                     .insertInto(table(dictionary.value(SESSION_TABLE)))
                     .columns(field(dictionary.value(SESSION_NONCE_COLUMN)),
@@ -123,10 +118,6 @@ public class DatabaseSessionRepository implements SessionRepository {
         } finally {
             database.release(connection);
         }
-    }
-
-    private long expirationHoursToMilliseconds() {
-        return expirationHours * HOURS_TO_MILLISECONDS;
     }
 
     @Transactional

@@ -33,7 +33,7 @@ public interface SessionRepository {
 
     UserStatus session(String nonce) throws Exception;
 
-    boolean beginSession(String nonce, UserStatus status) throws Exception;
+    boolean beginSession(String nonce, UserStatus status, long expirationMillis) throws Exception;
 
     boolean endSession(String nonce) throws Exception;
 }

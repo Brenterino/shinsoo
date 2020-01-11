@@ -23,6 +23,7 @@ import dev.zygon.shinsoo.repository.SessionRepository;
 import dev.zygon.shinsoo.security.NonceGenerator;
 import dev.zygon.shinsoo.security.SecuredSession;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -46,6 +47,7 @@ import java.util.Optional;
 public class CookieSecuredSession implements SecuredSession {
 
     private static final String SESSION_NONCE = "SESSION_NONCE";
+    private static final long HOURS_TO_MILLISECONDS = 3600000;
 
     @CookieParam(SESSION_NONCE)
     String nonce;
@@ -55,6 +57,9 @@ public class CookieSecuredSession implements SecuredSession {
 
     @Inject
     NonceGenerator generator;
+
+    @ConfigProperty(name = "session.expiration.hours", defaultValue = "72")
+    long expirationHours;
 
     @Override
     public UserStatus status() {
@@ -86,7 +91,7 @@ public class CookieSecuredSession implements SecuredSession {
     private UserStatus beginSession(UserStatus status) {
         String cookieNonce = generator.nonce(status.getUsername());
         try {
-            session.beginSession(cookieNonce, status);
+            session.beginSession(cookieNonce, status, expirationHoursToMilliseconds());
             status.setLoggedIn(true);
             return holdCookie(cookieNonce, status);
         } catch (Exception ex) {
@@ -94,6 +99,10 @@ public class CookieSecuredSession implements SecuredSession {
             status.setLoggedIn(false);
             return status;
         }
+    }
+
+    private long expirationHoursToMilliseconds() {
+        return expirationHours * HOURS_TO_MILLISECONDS;
     }
 
     @Override
