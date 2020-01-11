@@ -52,10 +52,12 @@ public class PostRepositoryService implements PostService {
     public PostPayload post(long id) {
         try {
             Post post = repository.post(id);
-            if (post != null)
-                return createPostPayload(post);
-            else
+            if (post == null)
                 return createFailedPostPayload("Requested post does not exist.");
+            else {
+                repository.updateViews(id, post.getViews() + 1);
+                return createPostPayload(post);
+            }
         } catch (Exception ex) {
             log.error("Unable to load posts from repository.", ex);
             return createFailedPostPayload("Unable to load post. Please try again later.");

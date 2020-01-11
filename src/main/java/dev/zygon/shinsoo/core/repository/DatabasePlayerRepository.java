@@ -121,6 +121,7 @@ public class DatabasePlayerRepository implements PlayerRepository {
         }
     }
 
+    @Transactional
     @Override
     public List<Player> playersByFame(long offset, long limit) throws Exception {
         Cache<Long, List<Player>> pageCache = manager.getCache(PLAYER_FAME_PAGE_CACHE);
@@ -152,6 +153,7 @@ public class DatabasePlayerRepository implements PlayerRepository {
         }
     }
 
+    @Transactional
     @Override
     public long countJob(JobRange range) throws Exception {
         Cache<JobRange, Long> countCache = manager.getCache(PLAYER_JOB_COUNT_CACHE);
@@ -173,6 +175,7 @@ public class DatabasePlayerRepository implements PlayerRepository {
         }
     }
 
+    @Transactional
     @Override
     public List<Player> playersByJob(JobRange range, long offset, long limit) throws Exception {
         Cache<JobRange, Map<Long, List<Player>>> jobCache = manager.getCache(PLAYER_JOB_PAGE_CACHE);
@@ -208,6 +211,7 @@ public class DatabasePlayerRepository implements PlayerRepository {
         }
     }
 
+    @Transactional
     @Override
     public List<Player> searchByQuery(String query) throws Exception {
         query = "%" + query + "%";

@@ -94,6 +94,61 @@ public class DatabasePostRepository implements PostRepository {
 
     @Transactional
     @Override
+    public boolean updateViews(long id, long views) throws Exception {
+        Connection connection = database.getConnection();
+        try {
+            int rowsUpdated = using(connection)
+                    .update(table(dictionary.value(POST_TABLE)))
+                    .set(field(dictionary.value(POST_VIEWS_COLUMN)), views)
+                    .where(field(dictionary.value(POST_ID_COLUMN)).eq(id))
+                    .execute();
+            updateCachedPostsViews(id, views);
+            return rowsUpdated > 1;
+        } finally {
+            database.release(connection);
+        }
+    }
+
+    private void updateCachedPostsViews(long id, long views) {
+        updateSinglePostViewCount(id, views);
+        updateCachedPagedPostViewCount(id, views);
+    }
+
+    private void updateSinglePostViewCount(long id, long views) {
+        Cache<Long, Post> postCache = manager.getCache(POST_PAGE_CACHE);
+        if (postCache.containsKey(id))
+            postCache.get(id).setViews(views);
+    }
+
+    private void updateCachedPagedPostViewCount(long id, long views) {
+        long pageSize = computePageSize();
+        if (pageSize > 0)
+            updateCachedPagedPostViewCountWithPageSize(id, views, pageSize);
+    }
+
+    private long computePageSize() {
+        Cache<Long, List<Post>> pageCache = manager.getCache(POST_PAGE_CACHE);
+        return pageCache.values()
+                .stream()
+                .findAny()
+                .map(List::size)
+                .orElse(0);
+    }
+
+    private void updateCachedPagedPostViewCountWithPageSize(long id, long views, long pageSize) {
+        Cache<Long, List<Post>> pageCache = manager.getCache(POST_PAGE_CACHE);
+        long page = Math.max(0, id - 1) / pageSize;
+        if (pageCache.containsKey(page)) {
+            List<Post> posts = pageCache.get(page);
+            posts.stream()
+             .filter(post -> post.getId() == id)
+             .findAny()
+             .ifPresent(post -> post.setViews(views));
+        }
+    }
+
+    @Transactional
+    @Override
     public long count() throws Exception {
         Cache<String, Long> countCache = manager.getCache(POST_COUNT_CACHE);
         if (countCache.containsKey(POST_COUNT_CACHE))
