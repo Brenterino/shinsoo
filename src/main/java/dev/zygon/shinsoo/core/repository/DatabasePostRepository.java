@@ -168,8 +168,9 @@ public class DatabasePostRepository implements PostRepository {
     @Transactional
     @Override
     public List<Post> posts(long offset, long limit) throws Exception {
+        boolean loadingPages = limit != count();
         Cache<Long, List<Post>> pageCache = manager.getCache(POST_PAGE_CACHE);
-        if (pageCache.containsKey(offset))
+        if (pageCache.containsKey(offset) && loadingPages)
             return pageCache.get(offset);
 
         Connection connection = database.getConnection();
@@ -188,7 +189,7 @@ public class DatabasePostRepository implements PostRepository {
                     .offset(offset)
                     .limit(limit)
                     .fetch(this::mapPost);
-            if (!posts.isEmpty() && limit != count()) // do not cache if we loaded all posts
+            if (!posts.isEmpty() && loadingPages)
                 pageCache.put(offset, posts);
             return posts;
         } finally {
@@ -207,5 +208,65 @@ public class DatabasePostRepository implements PostRepository {
                 .updatedTime(record.getValue(dictionary.value(POST_UPDATED_COLUMN), String.class))
                 .content(record.getValue(dictionary.value(POST_CONTENT_COLUMN), String.class))
                 .build();
+    }
+
+    @Override
+    public boolean create(Post post) throws Exception {
+        Connection connection = database.getConnection();
+        try {
+            long rowsInserted = using(connection)
+                    .insertInto(table(dictionary.value(POST_TABLE)))
+                    .set(field(dictionary.value(POST_TYPE_COLUMN)), post.getType())
+                    .set(field(dictionary.value(POST_TITLE_COLUMN)), post.getTitle())
+                    .set(field(dictionary.value(POST_CONTENT_COLUMN)), post.getContent())
+                    .set(field(dictionary.value(POST_AUTHOR_COLUMN)), post.getAuthor())
+                    .set(field(dictionary.value(POST_VIEWS_COLUMN)), post.getViews())
+                    .set(field(dictionary.value(POST_CREATED_COLUMN)), currentTimestamp())
+                    .set(field(dictionary.value(POST_UPDATED_COLUMN)), currentTimestamp())
+                    .execute();
+            invalidateCache();
+            return rowsInserted > 0;
+        } finally {
+            database.release(connection);
+        }
+    }
+
+    @Override
+    public boolean delete(long id) throws Exception {
+        Connection connection = database.getConnection();
+        try {
+            long rowsDeleted = using(connection)
+                    .deleteFrom(table(dictionary.value(POST_TABLE)))
+                    .where(field(dictionary.value(POST_ID_COLUMN)).eq(id))
+                    .execute();
+            invalidateCache();
+            return rowsDeleted > 0;
+        } finally {
+            database.release(connection);
+        }
+    }
+
+    @Override
+    public boolean update(long id, Post post) throws Exception {
+        Connection connection = database.getConnection();
+        try {
+            long rowsUpdated = using(connection)
+                    .update(table(dictionary.value(POST_TABLE)))
+                    .set(field(dictionary.value(POST_TYPE_COLUMN)), post.getType())
+                    .set(field(dictionary.value(POST_TITLE_COLUMN)), post.getTitle())
+                    .set(field(dictionary.value(POST_CONTENT_COLUMN)), post.getContent())
+                    .set(field(dictionary.value(POST_UPDATED_COLUMN)), currentTimestamp())
+                    .where(field(dictionary.value(POST_ID_COLUMN)).eq(id))
+                    .execute();
+            invalidateCache();
+            return rowsUpdated > 0;
+        } finally {
+            database.release(connection);
+        }
+    }
+
+    private void invalidateCache() {
+        manager.getCache(POST_CACHE).clear();
+        manager.getCache(POST_PAGE_CACHE).clear();
     }
 }

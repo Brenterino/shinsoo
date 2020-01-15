@@ -38,4 +38,10 @@ public interface PostService {
     Paginated<?> posts(long page);
 
     List<Post> posts();
+
+    SimpleResponse<?> create(Post post);
+
+    SimpleResponse<?> delete(long id);
+
+    SimpleResponse<?> update(long id, Post post);
 }

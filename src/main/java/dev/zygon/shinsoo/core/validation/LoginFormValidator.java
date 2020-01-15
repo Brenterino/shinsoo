@@ -24,6 +24,8 @@ import lombok.AllArgsConstructor;
 
 import java.util.regex.Matcher;
 
+import static dev.zygon.shinsoo.core.validation.ValidationConstants.*;
+
 /**
  * Utility which implements {@link FormValidator} in order
  * to verify if the form used for logging in was completed
@@ -42,6 +44,7 @@ public class LoginFormValidator implements FormValidator {
     @Override
     public FormFailures validate() {
         return verifyNoFieldsMissing()
+                .or(this::verifyFieldsContainNoWhitespace)
                 .or(this::verifyFieldLengths)
                 .or(this::verifyEmail);
     }
@@ -52,6 +55,18 @@ public class LoginFormValidator implements FormValidator {
         else if (credentials.getPassword().isEmpty())
             return FormFailures.PASSWORD_EMPTY;
         return FormFailures.NONE;
+    }
+
+    private FormFailures verifyFieldsContainNoWhitespace() {
+        Matcher emailMatcher = WHITESPACE_PATTERN.matcher(credentials.getEmail());
+        Matcher passwordMatcher = WHITESPACE_PATTERN.matcher(credentials.getPassword());
+
+        if (emailMatcher.matches())
+            return FormFailures.INVALID_EMAIL;
+        else if (passwordMatcher.matches())
+            return FormFailures.INVALID_PASSWORD;
+        else
+            return FormFailures.NONE;
     }
 
     private FormFailures verifyFieldLengths() {

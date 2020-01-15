@@ -19,13 +19,16 @@ package dev.zygon.shinsoo.core.controller;
 
 import dev.zygon.shinsoo.controller.PostController;
 import dev.zygon.shinsoo.message.Post;
+import dev.zygon.shinsoo.message.UserStatus;
 import dev.zygon.shinsoo.service.PostService;
+import dev.zygon.shinsoo.service.UserService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 /**
  * Implementation for {@link PostController} which utilizes
@@ -44,7 +47,10 @@ public class PostServiceController implements PostController {
     private static final int UNKNOWN_POST = 0;
 
     @Inject
-    PostService service;
+    PostService postService;
+
+    @Inject
+    UserService userService;
 
     @Override
     @GET
@@ -56,25 +62,46 @@ public class PostServiceController implements PostController {
     @GET
     @Path("/{id}")
     public Response post(@PathParam("id") long id) {
-        return Response.ok(service.post(id))
+        return Response.ok(postService.post(id))
                 .build();
+    }
+
+    @Override
+    @POST
+    public Response create(Post post) {
+        UserStatus status = userService.session();
+        post.setAuthor(status.getUsername());
+        if (status.getGmLevel() > UserStatus.UNAUTHORIZED_LEVEL)
+            return Response.ok(postService.create(post))
+                    .build();
+        else
+            return Response.status(Status.UNAUTHORIZED)
+                    .build();
     }
 
     @Override
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") long id) {
-        System.out.println("Attempting to delete " + id);
-        return Response.ok()
-                .build();
+        UserStatus status = userService.session();
+        if (status.getGmLevel() > UserStatus.UNAUTHORIZED_LEVEL)
+            return Response.ok(postService.delete(id))
+                    .build();
+        else
+            return Response.status(Status.UNAUTHORIZED)
+                    .build();
     }
 
     @Override
     @PATCH
     @Path("/{id}")
     public Response update(@PathParam("id") long id, Post post) {
-        System.out.println(post.toString());
-        return Response.ok()
-                .build();
+        UserStatus status = userService.session();
+        if (status.getGmLevel() > UserStatus.UNAUTHORIZED_LEVEL)
+            return Response.ok(postService.update(id, post))
+                    .build();
+        else
+            return Response.status(Status.UNAUTHORIZED)
+                    .build();
     }
 }

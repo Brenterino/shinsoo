@@ -25,6 +25,8 @@ import lombok.AllArgsConstructor;
 
 import java.util.regex.Matcher;
 
+import static dev.zygon.shinsoo.core.validation.ValidationConstants.*;
+
 /**
  * Utility which implements {@link FormValidator} in order
  * to verify if the form used for registration was completed
@@ -45,6 +47,7 @@ public class JoinFormValidator implements FormValidator {
     public FormFailures validate() {
         return verifyNoFieldsMissing()
                 .or(this::verifyFieldLengths)
+                .or(this::verifyFieldsContainNoWhitespace)
                 .or(this::verifyEmail)
                 .or(this::verifyPasswordConfirmation)
                 .or(this::verifyToken);
@@ -63,6 +66,27 @@ public class JoinFormValidator implements FormValidator {
             return FormFailures.CONFIRMATION_EMPTY;
         else if (credentials.getToken().isEmpty())
             return FormFailures.TOKEN_CHALLENGE_INCOMPLETE;
+        else
+            return FormFailures.NONE;
+    }
+
+    private FormFailures verifyFieldsContainNoWhitespace() {
+        Matcher nameMatcher = WHITESPACE_PATTERN.matcher(credentials.getName());
+        Matcher emailMatcher = WHITESPACE_PATTERN.matcher(credentials.getEmail());
+        Matcher mapleIdMatcher = WHITESPACE_PATTERN.matcher(credentials.getMapleId());
+        Matcher passwordMatcher = WHITESPACE_PATTERN.matcher(credentials.getPassword());
+        Matcher confirmationMatcher = WHITESPACE_PATTERN.matcher(credentials.getConfirmation());
+
+        if (nameMatcher.matches())
+            return FormFailures.INVALID_NAME;
+        else if (emailMatcher.matches())
+            return FormFailures.INVALID_EMAIL;
+        else if (mapleIdMatcher.matches())
+            return FormFailures.INVALID_MAPLE_ID;
+        else if (passwordMatcher.matches())
+            return FormFailures.INVALID_PASSWORD;
+        else if (confirmationMatcher.matches())
+            return FormFailures.INVALID_CONFIRMATION;
         else
             return FormFailures.NONE;
     }

@@ -44,8 +44,15 @@ public enum FormFailures {
     NAME_SIZE_OUT_OF_BOUNDS("Provided name is either too long or too short."),
     MAPLE_ID_SIZE_OUT_OF_BOUNDS("Provided MapleID is either too long or too short."),
     PASSWORD_SIZE_OUT_OF_BOUNDS("Provided password is either too long or too short."),
+    INVALID_NAME("Provided name is not valid."),
     INVALID_EMAIL("Provided email is not valid."),
+    INVALID_MAPLE_ID("Provided MapleID is not valid."),
+    INVALID_PASSWORD("Provided password is not valid."),
+    INVALID_CONFIRMATION("Provided confirmation is not valid."),
     CONFIRMATION_FAILED("Passwords do not match."),
+    INVALID_POST_TYPE("Post type is too short or invalid."),
+    INVALID_POST_TITLE("Post title is too short or invalid."),
+    INVALID_POST_CONTENT("Post content is too short or invalid."),
     NONE(""),
     ;
 

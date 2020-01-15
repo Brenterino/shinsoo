@@ -41,6 +41,9 @@ public class UserStatus {
     @JsonIgnore
     public static final int LOGGED_OUT_STATUS = 0;
 
+    @JsonIgnore
+    public static final int UNAUTHORIZED_LEVEL = 0;
+
     @Builder.Default
     @JsonProperty("logged_in")
     private boolean loggedIn = false;

@@ -38,4 +38,10 @@ public interface PostRepository {
     long count() throws Exception;
 
     List<Post> posts(long offset, long limit) throws Exception;
+
+    boolean create(Post post) throws Exception;
+
+    boolean delete(long id) throws Exception;
+
+    boolean update(long id, Post post) throws Exception;
 }

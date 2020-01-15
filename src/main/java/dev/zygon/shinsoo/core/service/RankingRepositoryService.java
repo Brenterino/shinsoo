@@ -107,6 +107,13 @@ public class RankingRepositoryService implements RankingService {
         }
     }
 
+    private Paginated<?> createFailedPagination(String message) {
+        return Paginated.<Void>builder()
+                .success(false)
+                .error(singletonList(message))
+                .build();
+    }
+
     private Paginated<?> createPaginatedRankings(List<Player> players, long page, long totalPages) {
         return Paginated.<List<Player>>builder()
                 .success(true)
@@ -115,13 +122,6 @@ public class RankingRepositoryService implements RankingService {
                 .next(Math.min(page + 1, totalPages))
                 .last(totalPages)
                 .data(players)
-                .build();
-    }
-
-    private Paginated<?> createFailedPagination(String message) {
-        return Paginated.<Void>builder()
-                .success(false)
-                .error(singletonList(message))
                 .build();
     }
 
@@ -143,17 +143,17 @@ public class RankingRepositoryService implements RankingService {
         }
     }
 
-    private PlayerList createPayloadResults(List<Player> players) {
-        return PlayerList.builder()
-                .success(true)
-                .players(players)
-                .build();
-    }
-
     private PlayerList createFailedPayload(String message) {
         return PlayerList.builder()
                 .success(false)
                 .error(singletonList(message))
+                .build();
+    }
+
+    private PlayerList createPayloadResults(List<Player> players) {
+        return PlayerList.builder()
+                .success(true)
+                .players(players)
                 .build();
     }
 }

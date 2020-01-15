@@ -17,9 +17,11 @@
 */
 package dev.zygon.shinsoo.core.service;
 
+import dev.zygon.shinsoo.core.validation.PostFormValidator;
 import dev.zygon.shinsoo.message.*;
 import dev.zygon.shinsoo.repository.PostRepository;
 import dev.zygon.shinsoo.service.PostService;
+import dev.zygon.shinsoo.validation.FormFailures;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -62,13 +64,6 @@ public class PostRepositoryService implements PostService {
         }
     }
 
-    private SimpleResponse<Post> createPostPayload(Post post) {
-        return SimpleResponse.<Post>builder()
-                .success(true)
-                .data(post)
-                .build();
-    }
-
     private SimpleResponse<Post> createFailedPostPayload(String message) {
         return SimpleResponse.<Post>builder()
                 .success(false)
@@ -76,8 +71,15 @@ public class PostRepositoryService implements PostService {
                 .build();
     }
 
+    private SimpleResponse<Post> createPostPayload(Post post) {
+        return SimpleResponse.<Post>builder()
+                .success(true)
+                .data(post)
+                .build();
+    }
+
     @Override
-    public Paginated posts(long page) {
+    public Paginated<?> posts(long page) {
         try {
             long totalPages = (long) Math.ceil(repository.count() / (double) Paginated.DEFAULT_PAGE_SIZE);
             if (page < 0 || page > totalPages)
@@ -93,6 +95,13 @@ public class PostRepositoryService implements PostService {
         }
     }
 
+    private Paginated<?> createFailedPagination(String message) {
+        return Paginated.<Void>builder()
+                .success(false)
+                .error(singletonList(message))
+                .build();
+    }
+
     private Paginated<?> createPaginatedPosts(List<Post> posts, long page, long totalPages) {
         return Paginated.<List<Post>>builder()
                 .success(true)
@@ -104,13 +113,6 @@ public class PostRepositoryService implements PostService {
                 .build();
     }
 
-    private Paginated<?> createFailedPagination(String message) {
-        return Paginated.<Void>builder()
-                .success(false)
-                .error(singletonList(message))
-                .build();
-    }
-
     @Override
     public List<Post> posts() {
         try {
@@ -119,5 +121,76 @@ public class PostRepositoryService implements PostService {
             log.error("Unable to load posts from repository.", ex);
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public SimpleResponse<?> create(Post post) {
+        PostFormValidator validator = new PostFormValidator(post);
+        FormFailures formFailures = validator.validate();
+        if (formFailures == FormFailures.NONE)
+            return attemptCreate(post);
+        else
+            return createFailedOperationMessage(formFailures.getMessage());
+    }
+
+    private SimpleResponse<?> attemptCreate(Post post) {
+        try {
+            if (repository.create(post))
+                return createSuccessfulOperationMessage("Successfully created post.");
+            else
+                return createFailedOperationMessage("Post could not be inserted for an unknown reason.");
+        } catch (Exception ex) {
+            log.error("Unable to insert post into repository.", ex);
+            return createFailedOperationMessage("Unable to insert post into repository. Try again later.");
+        }
+    }
+
+    @Override
+    public SimpleResponse<?> delete(long id) {
+        try {
+            if (repository.delete(id))
+                return createSuccessfulOperationMessage("Successfully deleted post.");
+            else
+                return createFailedOperationMessage("Either post could not be deleted or it no longer exists.");
+        } catch (Exception ex) {
+            log.error("Unable to delete post from repository.", ex);
+            return createFailedOperationMessage("Unable to delete post from repository. Try again later.");
+        }
+    }
+
+    @Override
+    public SimpleResponse<?> update(long id, Post post) {
+        PostFormValidator validator = new PostFormValidator(post);
+        FormFailures formFailures = validator.validate();
+        if (formFailures == FormFailures.NONE)
+            return attemptUpdate(id, post);
+        else
+            return createFailedOperationMessage(formFailures.getMessage());
+    }
+
+    private SimpleResponse<?> attemptUpdate(long id, Post post) {
+        try {
+            if (repository.update(id, post))
+                return createSuccessfulOperationMessage("Successfully updated post.");
+            else
+                return createFailedOperationMessage("Either post could not be updated or it no longer exists.");
+        } catch (Exception ex) {
+            log.error("Unable to update post in repository.", ex);
+            return createFailedOperationMessage("Unable to update post in repository. Try again later.");
+        }
+    }
+
+    private SimpleResponse<?> createFailedOperationMessage(String message) {
+        return SimpleResponse.<Void>builder()
+                .success(false)
+                .error(singletonList(message))
+                .build();
+    }
+
+    private SimpleResponse<?> createSuccessfulOperationMessage(String message) {
+        return SimpleResponse.<List<String>>builder()
+                .success(true)
+                .data(singletonList(message))
+                .build();
     }
 }

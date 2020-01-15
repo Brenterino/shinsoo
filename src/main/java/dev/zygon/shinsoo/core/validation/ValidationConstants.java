@@ -15,28 +15,28 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-package dev.zygon.shinsoo.controller;
+package dev.zygon.shinsoo.core.validation;
 
-import dev.zygon.shinsoo.message.Post;
-
-import javax.ws.rs.core.Response;
+import java.util.regex.Pattern;
 
 /**
- * Controller for requests to retrieve specific news/update posts.
+ * Provides constants for form validation purposes.
  *
  * @author Brenterino
  * @since 1.0.0.1
  * @version 1.0.0.1
  */
-public interface PostController {
+public class ValidationConstants {
 
-    Response post();
+    public static final long MINIMUM_FIELD_SIZE = 4;
+    public static final long MAXIMUM_FIELD_SIZE = 12;
+    public static final long MAXIMUM_EMAIL_SIZE = 320;
 
-    Response post(long id);
+    public static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^([\\p{L}-_\\.]+){1,64}@([\\p{L}-_\\.]+){2,255}.[a-z]{2,}$"
+    );
 
-    Response create(Post post);
-
-    Response delete(long id);
-
-    Response update(long id, Post post);
+    public static final Pattern WHITESPACE_PATTERN = Pattern.compile(
+            "\\s"
+    );
 }
