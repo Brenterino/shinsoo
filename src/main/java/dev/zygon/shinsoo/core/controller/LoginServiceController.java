@@ -20,7 +20,7 @@ package dev.zygon.shinsoo.core.controller;
 import dev.zygon.shinsoo.controller.LoginController;
 import dev.zygon.shinsoo.core.message.CookieHoldingUserStatus;
 import dev.zygon.shinsoo.message.LoginCredentials;
-import dev.zygon.shinsoo.message.UserStatusPayload;
+import dev.zygon.shinsoo.message.SimpleResponse;
 import dev.zygon.shinsoo.service.UserService;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
@@ -52,8 +52,8 @@ public class LoginServiceController implements LoginController {
     @Override
     @POST
     public Response login(@MultipartForm LoginCredentials credentials) {
-        UserStatusPayload payload = service.login(credentials);
-        CookieHoldingUserStatus status = (CookieHoldingUserStatus) payload.getStatus();
+        SimpleResponse<?> payload = service.login(credentials);
+        CookieHoldingUserStatus status = (CookieHoldingUserStatus) payload.getData();
         ResponseBuilder builder = Response.ok(payload);
         if (status != null)
             builder.cookie(status.getCookie());

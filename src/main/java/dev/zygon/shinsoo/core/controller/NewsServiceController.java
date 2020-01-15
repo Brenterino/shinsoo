@@ -57,4 +57,12 @@ public class NewsServiceController implements NewsController {
         return Response.ok(service.posts(page))
                 .build();
     }
+
+    @Override
+    @GET
+    @Path("/all")
+    public Response all() {
+        return Response.ok(service.posts())
+                .build();
+    }
 }

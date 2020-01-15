@@ -33,7 +33,7 @@ public interface PostRepository {
 
     Post post(long id) throws Exception;
 
-    boolean updateViews(long id, long views) throws Exception;
+    void updateViews(long id, long views) throws Exception;
 
     long count() throws Exception;
 

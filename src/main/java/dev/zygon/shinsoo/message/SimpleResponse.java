@@ -17,36 +17,34 @@
 */
 package dev.zygon.shinsoo.message;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Payload which contains a single post when the request was
- * successful or an error message when it failed.
+ * Foundational message which can be used directly or built off of.
  *
  * @author Brenterino
  * @since 1.0.0.1
  * @version 1.0.0.1
  */
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostPayload {
-
-    @JsonIgnore
-    public static final int UNKNOWN_POST = 0;
+public class SimpleResponse<E> {
 
     @Builder.Default
     private boolean success = false;
 
     @Builder.Default
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("data")
-    private Post post = null;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private E data = null;
 
     @Builder.Default
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

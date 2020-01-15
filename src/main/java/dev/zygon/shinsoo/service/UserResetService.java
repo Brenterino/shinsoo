@@ -18,7 +18,7 @@
 package dev.zygon.shinsoo.service;
 
 import dev.zygon.shinsoo.message.ResetCredentials;
-import dev.zygon.shinsoo.message.ResetResponse;
+import dev.zygon.shinsoo.message.SimpleResponse;
 
 /**
  * Service which can process a password reset request and
@@ -30,5 +30,5 @@ import dev.zygon.shinsoo.message.ResetResponse;
  */
 public interface UserResetService {
 
-    ResetResponse reset(ResetCredentials credentials);
+    SimpleResponse<?> reset(ResetCredentials credentials);
 }

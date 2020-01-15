@@ -18,7 +18,10 @@
 package dev.zygon.shinsoo.service;
 
 import dev.zygon.shinsoo.message.Paginated;
-import dev.zygon.shinsoo.message.PostPayload;
+import dev.zygon.shinsoo.message.Post;
+import dev.zygon.shinsoo.message.SimpleResponse;
+
+import java.util.List;
 
 /**
  * Service which can create a payload response for a post or
@@ -30,7 +33,9 @@ import dev.zygon.shinsoo.message.PostPayload;
  */
 public interface PostService {
 
-    PostPayload post(long id);
+    SimpleResponse<Post> post(long id);
 
-    Paginated posts(long page);
+    Paginated<?> posts(long page);
+
+    List<Post> posts();
 }

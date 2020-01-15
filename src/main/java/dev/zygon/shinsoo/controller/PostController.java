@@ -17,6 +17,8 @@
 */
 package dev.zygon.shinsoo.controller;
 
+import dev.zygon.shinsoo.message.Post;
+
 import javax.ws.rs.core.Response;
 
 /**
@@ -31,4 +33,8 @@ public interface PostController {
     Response post();
 
     Response post(long id);
+
+    Response delete(long id);
+
+    Response update(long id, Post post);
 }

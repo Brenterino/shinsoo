@@ -18,10 +18,12 @@
 package dev.zygon.shinsoo.core.service;
 
 import dev.zygon.shinsoo.message.ResetCredentials;
-import dev.zygon.shinsoo.message.ResetResponse;
+import dev.zygon.shinsoo.message.SimpleResponse;
 import dev.zygon.shinsoo.service.UserResetService;
 
 import javax.enterprise.context.ApplicationScoped;
+
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 
@@ -38,8 +40,8 @@ import static java.util.Collections.singletonList;
 public class UserResetNoService implements UserResetService {
 
     @Override
-    public ResetResponse reset(ResetCredentials credentials) {
-        return ResetResponse.builder()
+    public SimpleResponse<?> reset(ResetCredentials credentials) {
+        return SimpleResponse.<List<String>>builder()
                 .success(false)
                 .error(singletonList("Feature is not supported."))
                 .build();

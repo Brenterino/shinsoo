@@ -17,16 +17,14 @@
 */
 package dev.zygon.shinsoo.core.service;
 
-import dev.zygon.shinsoo.message.Paginated;
-import dev.zygon.shinsoo.message.Post;
-import dev.zygon.shinsoo.message.PostListPage;
-import dev.zygon.shinsoo.message.PostPayload;
+import dev.zygon.shinsoo.message.*;
 import dev.zygon.shinsoo.repository.PostRepository;
 import dev.zygon.shinsoo.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -49,7 +47,7 @@ public class PostRepositoryService implements PostService {
     PostRepository repository;
 
     @Override
-    public PostPayload post(long id) {
+    public SimpleResponse<Post> post(long id) {
         try {
             Post post = repository.post(id);
             if (post == null)
@@ -64,15 +62,15 @@ public class PostRepositoryService implements PostService {
         }
     }
 
-    private PostPayload createPostPayload(Post post) {
-        return PostPayload.builder()
+    private SimpleResponse<Post> createPostPayload(Post post) {
+        return SimpleResponse.<Post>builder()
                 .success(true)
-                .post(post)
+                .data(post)
                 .build();
     }
 
-    private PostPayload createFailedPostPayload(String message) {
-        return PostPayload.builder()
+    private SimpleResponse<Post> createFailedPostPayload(String message) {
+        return SimpleResponse.<Post>builder()
                 .success(false)
                 .error(singletonList(message))
                 .build();
@@ -95,21 +93,31 @@ public class PostRepositoryService implements PostService {
         }
     }
 
-    private Paginated createPaginatedPosts(List<Post> posts, long page, long totalPages) {
-        return PostListPage.builder()
+    private Paginated<?> createPaginatedPosts(List<Post> posts, long page, long totalPages) {
+        return Paginated.<List<Post>>builder()
                 .success(true)
                 .prev(Math.max(page - 1, 1))
                 .current(page)
                 .next(Math.min(page + 1, totalPages))
                 .last(totalPages)
-                .posts(posts)
+                .data(posts)
                 .build();
     }
 
-    private Paginated createFailedPagination(String message) {
-        return Paginated.builder()
+    private Paginated<?> createFailedPagination(String message) {
+        return Paginated.<Void>builder()
                 .success(false)
                 .error(singletonList(message))
                 .build();
+    }
+
+    @Override
+    public List<Post> posts() {
+        try {
+            return repository.posts(0, repository.count());
+        } catch (Exception ex) {
+            log.error("Unable to load posts from repository.", ex);
+            return Collections.emptyList();
+        }
     }
 }

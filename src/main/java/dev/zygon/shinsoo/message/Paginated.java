@@ -22,9 +22,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Represents a response which has its full results split across
  * multiple pages.
@@ -34,10 +31,11 @@ import java.util.List;
  * @version 1.0.0.1
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Paginated {
+public class Paginated<E> extends SimpleResponse<E> {
 
     @JsonIgnore
     public static final int DEFAULT_PAGE = 1;
@@ -46,21 +44,18 @@ public class Paginated {
     public static final int DEFAULT_PAGE_SIZE = 5;
 
     @Builder.Default
-    private boolean success = false;
-
-    @Builder.Default
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private long prev = 0;
 
     @Builder.Default
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private long current = 0;
 
     @Builder.Default
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private long next = 0;
 
     @Builder.Default
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private long last = 0;
-
-    @Builder.Default
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<String> error = Collections.emptyList();
 }

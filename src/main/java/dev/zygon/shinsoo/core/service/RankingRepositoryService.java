@@ -53,7 +53,7 @@ public class RankingRepositoryService implements RankingService {
     PlayerRepository repository;
 
     @Override
-    public Paginated rankings(long page) {
+    public Paginated<?> rankings(long page) {
         try {
             long totalPages = (long) Math.ceil(repository.count() / (double) Paginated.DEFAULT_PAGE_SIZE);
             if (page < 0 || page > totalPages)
@@ -70,7 +70,7 @@ public class RankingRepositoryService implements RankingService {
     }
 
     @Override
-    public Paginated jobRankings(String job, long page) {
+    public Paginated<?> jobRankings(String job, long page) {
         JobRange range = JobRange.fromName(job);
         if (range == JobRange.UNKNOWN)
             return createFailedPagination("Select a job.");
@@ -91,7 +91,7 @@ public class RankingRepositoryService implements RankingService {
     }
 
     @Override
-    public Paginated fameRankings(long page) {
+    public Paginated<?> fameRankings(long page) {
         try {
             long totalPages = (long) Math.ceil(repository.count() / (double) Paginated.DEFAULT_PAGE_SIZE);
             if (page < 0 || page > totalPages)
@@ -107,19 +107,19 @@ public class RankingRepositoryService implements RankingService {
         }
     }
 
-    private Paginated createPaginatedRankings(List<Player> players, long page, long totalPages) {
-        return Ranking.builder()
+    private Paginated<?> createPaginatedRankings(List<Player> players, long page, long totalPages) {
+        return Paginated.<List<Player>>builder()
                 .success(true)
                 .prev(Math.max(page - 1, 1))
                 .current(page)
                 .next(Math.min(page + 1, totalPages))
                 .last(totalPages)
-                .players(players)
+                .data(players)
                 .build();
     }
 
-    private Paginated createFailedPagination(String message) {
-        return Paginated.builder()
+    private Paginated<?> createFailedPagination(String message) {
+        return Paginated.<Void>builder()
                 .success(false)
                 .error(singletonList(message))
                 .build();

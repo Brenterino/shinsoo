@@ -29,7 +29,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import static dev.zygon.shinsoo.core.dsl.DSLKeys.*;
@@ -94,16 +93,15 @@ public class DatabasePostRepository implements PostRepository {
 
     @Transactional
     @Override
-    public boolean updateViews(long id, long views) throws Exception {
+    public void updateViews(long id, long views) throws Exception {
         Connection connection = database.getConnection();
         try {
-            int rowsUpdated = using(connection)
+            using(connection)
                     .update(table(dictionary.value(POST_TABLE)))
                     .set(field(dictionary.value(POST_VIEWS_COLUMN)), views)
                     .where(field(dictionary.value(POST_ID_COLUMN)).eq(id))
                     .execute();
             updateCachedPostsViews(id, views);
-            return rowsUpdated > 1;
         } finally {
             database.release(connection);
         }
@@ -169,7 +167,7 @@ public class DatabasePostRepository implements PostRepository {
 
     @Transactional
     @Override
-    public List<Post> posts(long offset, long limit) throws SQLException {
+    public List<Post> posts(long offset, long limit) throws Exception {
         Cache<Long, List<Post>> pageCache = manager.getCache(POST_PAGE_CACHE);
         if (pageCache.containsKey(offset))
             return pageCache.get(offset);
@@ -190,7 +188,7 @@ public class DatabasePostRepository implements PostRepository {
                     .offset(offset)
                     .limit(limit)
                     .fetch(this::mapPost);
-            if (!posts.isEmpty())
+            if (!posts.isEmpty() && limit != count()) // do not cache if we loaded all posts
                 pageCache.put(offset, posts);
             return posts;
         } finally {

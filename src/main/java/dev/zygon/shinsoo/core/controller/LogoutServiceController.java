@@ -19,7 +19,7 @@ package dev.zygon.shinsoo.core.controller;
 
 import dev.zygon.shinsoo.controller.LogoutController;
 import dev.zygon.shinsoo.core.message.CookieHoldingUserStatus;
-import dev.zygon.shinsoo.message.UserStatusPayload;
+import dev.zygon.shinsoo.message.SimpleResponse;
 import dev.zygon.shinsoo.service.UserService;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -48,8 +48,8 @@ public class LogoutServiceController implements LogoutController {
     @Override
     @GET
     public Response logout() {
-        UserStatusPayload payload = service.logout();
-        CookieHoldingUserStatus status = (CookieHoldingUserStatus) payload.getStatus();
+        SimpleResponse<?> payload = service.logout();
+        CookieHoldingUserStatus status = (CookieHoldingUserStatus) payload.getData();
         ResponseBuilder builder = Response.ok(payload);
         if (status != null)
             builder.cookie(status.getCookie());

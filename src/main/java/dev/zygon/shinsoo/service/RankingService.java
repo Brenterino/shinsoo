@@ -31,11 +31,11 @@ import dev.zygon.shinsoo.message.PlayerList;
  */
 public interface RankingService {
 
-    Paginated rankings(long page);
+    Paginated<?> rankings(long page);
 
-    Paginated jobRankings(String job, long page);
+    Paginated<?> jobRankings(String job, long page);
 
-    Paginated fameRankings(long page);
+    Paginated<?> fameRankings(long page);
 
     PlayerList searchRankings(String query);
 }

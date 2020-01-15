@@ -18,7 +18,7 @@
 package dev.zygon.shinsoo.core.controller;
 
 import dev.zygon.shinsoo.controller.PostController;
-import dev.zygon.shinsoo.message.PostPayload;
+import dev.zygon.shinsoo.message.Post;
 import dev.zygon.shinsoo.service.PostService;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -41,13 +41,15 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class PostServiceController implements PostController {
 
+    private static final int UNKNOWN_POST = 0;
+
     @Inject
     PostService service;
 
     @Override
     @GET
     public Response post() {
-        return post(PostPayload.UNKNOWN_POST);
+        return post(UNKNOWN_POST);
     }
 
     @Override
@@ -55,6 +57,24 @@ public class PostServiceController implements PostController {
     @Path("/{id}")
     public Response post(@PathParam("id") long id) {
         return Response.ok(service.post(id))
+                .build();
+    }
+
+    @Override
+    @DELETE
+    @Path("/{id}")
+    public Response delete(@PathParam("id") long id) {
+        System.out.println("Attempting to delete " + id);
+        return Response.ok()
+                .build();
+    }
+
+    @Override
+    @PATCH
+    @Path("/{id}")
+    public Response update(@PathParam("id") long id, Post post) {
+        System.out.println(post.toString());
+        return Response.ok()
                 .build();
     }
 }

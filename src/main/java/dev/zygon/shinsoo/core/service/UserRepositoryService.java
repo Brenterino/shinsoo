@@ -20,8 +20,8 @@ package dev.zygon.shinsoo.core.service;
 import dev.zygon.shinsoo.core.dto.UserDetails;
 import dev.zygon.shinsoo.core.validation.LoginFormValidator;
 import dev.zygon.shinsoo.message.LoginCredentials;
+import dev.zygon.shinsoo.message.SimpleResponse;
 import dev.zygon.shinsoo.message.UserStatus;
-import dev.zygon.shinsoo.message.UserStatusPayload;
 import dev.zygon.shinsoo.repository.UserRepository;
 import dev.zygon.shinsoo.security.Checker;
 import dev.zygon.shinsoo.service.UserService;
@@ -66,7 +66,7 @@ public class UserRepositoryService implements UserService {
     }
 
     @Override
-    public UserStatusPayload login(LoginCredentials credentials) {
+    public SimpleResponse<?> login(LoginCredentials credentials) {
         LoginFormValidator validator = new LoginFormValidator(credentials);
         FormFailures formFailures = validator.validate();
         if (formFailures == FormFailures.NONE)
@@ -75,7 +75,7 @@ public class UserRepositoryService implements UserService {
             return createFailedResponse(formFailures.getMessage());
     }
 
-    private UserStatusPayload attemptLogin(LoginCredentials credentials) {
+    private SimpleResponse<?> attemptLogin(LoginCredentials credentials) {
         String email = credentials.getEmail();
         String password = credentials.getPassword();
         Optional<UserDetails> retrievedDetails = retrieveDetailsForEmail(email);
@@ -91,7 +91,7 @@ public class UserRepositoryService implements UserService {
         }
     }
 
-    private UserStatusPayload doLogin(UserDetails details) {
+    private SimpleResponse<?> doLogin(UserDetails details) {
         UserStatus status = session.begin(createStatusFromDetails(details));
 
         if (status.isLoggedIn())
@@ -119,14 +119,14 @@ public class UserRepositoryService implements UserService {
     }
 
     @Override
-    public UserStatusPayload logout() {
+    public SimpleResponse<?> logout() {
         if (session.status().isLoggedIn())
             return doLogout();
         else
             return createFailedResponse("Currently not logged in.");
     }
 
-    private UserStatusPayload doLogout() {
+    private SimpleResponse<?> doLogout() {
         UserStatus status = session.end();
         if (status.isLoggedIn())
             return createFailedResponse("Something went wrong when logging out. Please try again.");
@@ -134,17 +134,17 @@ public class UserRepositoryService implements UserService {
             return createSuccessfulResponse(status);
     }
 
-    private static UserStatusPayload createFailedResponse(String message) {
-        return UserStatusPayload.builder()
+    private static SimpleResponse<?> createFailedResponse(String message) {
+        return SimpleResponse.<UserStatus>builder()
                 .success(false)
                 .error(singletonList(message))
                 .build();
     }
 
-    private static UserStatusPayload createSuccessfulResponse(UserStatus status) {
-        return UserStatusPayload.builder()
+    private static SimpleResponse<?> createSuccessfulResponse(UserStatus status) {
+        return SimpleResponse.<UserStatus>builder()
                 .success(true)
-                .status(status)
+                .data(status)
                 .build();
     }
 }

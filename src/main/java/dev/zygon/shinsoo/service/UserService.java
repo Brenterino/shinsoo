@@ -31,7 +31,7 @@ public interface UserService {
 
     UserStatus session();
 
-    UserStatusPayload login(LoginCredentials credentials);
+    SimpleResponse<?> login(LoginCredentials credentials);
 
-    UserStatusPayload logout();
+    SimpleResponse<?> logout();
 }

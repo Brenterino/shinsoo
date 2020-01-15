@@ -19,9 +19,9 @@ package dev.zygon.shinsoo.core.service;
 
 import dev.zygon.shinsoo.core.dto.UserDetails;
 import dev.zygon.shinsoo.core.validation.JoinFormValidator;
+import dev.zygon.shinsoo.message.SimpleResponse;
 import dev.zygon.shinsoo.validation.FormFailures;
 import dev.zygon.shinsoo.message.JoinCredentials;
-import dev.zygon.shinsoo.message.JoinResponse;
 import dev.zygon.shinsoo.repository.UserRepository;
 import dev.zygon.shinsoo.security.Encoder;
 import dev.zygon.shinsoo.security.TokenValidator;
@@ -30,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 
@@ -58,7 +60,7 @@ public class UserJoinRepositoryService implements UserJoinService {
     TokenValidator tokenValidator;
 
     @Override
-    public JoinResponse join(JoinCredentials credentials) {
+    public SimpleResponse<?> join(JoinCredentials credentials) {
         JoinFormValidator validator = new JoinFormValidator(credentials, tokenValidator);
         FormFailures formFailures = validator.validate();
         if (formFailures == FormFailures.NONE)
@@ -67,7 +69,7 @@ public class UserJoinRepositoryService implements UserJoinService {
             return createFailedJoinResponse(formFailures.getMessage());
     }
 
-    private JoinResponse attemptJoin(JoinCredentials credentials) {
+    private SimpleResponse<?> attemptJoin(JoinCredentials credentials) {
         String username = credentials.getName();
         String mapleId = credentials.getMapleId();
         String email = credentials.getEmail();
@@ -97,24 +99,24 @@ public class UserJoinRepositoryService implements UserJoinService {
                 .build();
     }
 
-    private JoinResponse createUser(UserDetails details) throws Exception {
+    private SimpleResponse<?> createUser(UserDetails details) throws Exception {
         if (repository.create(details))
             return createSuccessfulJoinResponse();
         else
             return createFailedJoinResponse("Something unexpected happened while saving. Please try again.");
     }
 
-    private static JoinResponse createFailedJoinResponse(String message) {
-        return JoinResponse.builder()
+    private static SimpleResponse<?> createFailedJoinResponse(String message) {
+        return SimpleResponse.<List<String>>builder()
                 .success(false)
                 .error(singletonList(message))
                 .build();
     }
 
-    private static JoinResponse createSuccessfulJoinResponse() {
-        return JoinResponse.builder()
+    private static SimpleResponse<?> createSuccessfulJoinResponse() {
+        return SimpleResponse.<List<String>>builder()
                 .success(true)
-                .response(singletonList("You have successfully joined!"))
+                .data(singletonList("You have successfully joined!"))
                 .build();
     }
 }

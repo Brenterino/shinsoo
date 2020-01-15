@@ -228,8 +228,8 @@ public class DatabasePlayerRepository implements PlayerRepository {
                     .from(table(dictionary.value(PLAYER_TABLE)))
                     .leftJoin(table(dictionary.value(GUILD_TABLE)))
                     .on(field(name(PLAYER_TABLE, PLAYER_GUILD_ID_COLUMN)).eq(field(name(GUILD_TABLE, GUILD_ID_COLUMN))))
-                    .where(field(dictionary.value(PLAYER_RANK_COLUMN)).gt(Player.PLAYER_UNRANKED)
-                      .and(field(dictionary.value(PLAYER_NAME_COLUMN)).like(query)))
+                    .where(field(name(PLAYER_TABLE, PLAYER_RANK_COLUMN)).gt(Player.PLAYER_UNRANKED)
+                      .and(field(name(PLAYER_TABLE, PLAYER_NAME_COLUMN)).like(query)))
                     .orderBy(field(dictionary.value(PLAYER_RANK_COLUMN)).asc())
                     .fetch(this::mapPlayer);
         } finally {

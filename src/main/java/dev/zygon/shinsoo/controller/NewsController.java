@@ -31,4 +31,6 @@ public interface NewsController {
     Response news();
 
     Response news(long page);
+
+    Response all();
 }
