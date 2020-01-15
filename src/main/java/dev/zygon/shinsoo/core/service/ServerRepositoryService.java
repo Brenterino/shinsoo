@@ -18,7 +18,9 @@
 package dev.zygon.shinsoo.core.service;
 
 import dev.zygon.shinsoo.message.ServerList;
+import dev.zygon.shinsoo.message.Settings;
 import dev.zygon.shinsoo.repository.ServerRepository;
+import dev.zygon.shinsoo.repository.SettingsRepository;
 import dev.zygon.shinsoo.repository.UserRepository;
 import dev.zygon.shinsoo.service.ServerService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +32,10 @@ import java.util.Optional;
 
 /**
  * Implementation for {@link ServerService} which utilizes
- * {@link UserRepository} to retrieve online user count
- * and {@link ServerRepository} to retrieve server status
- * information.
+ * {@link UserRepository} to retrieve online user count,
+ * {@link ServerRepository} to retrieve server status
+ * information, and {@link SettingsRepository} to retrieve
+ * the banner message.
  *
  * @author Brenterino
  * @since 1.0.0.1
@@ -42,11 +45,11 @@ import java.util.Optional;
 @ApplicationScoped
 public class ServerRepositoryService implements ServerService {
 
-    @ConfigProperty(name = "shinsoo.banner.message")
-    Optional<String> message;
-
     @Inject
     UserRepository userRepository;
+
+    @Inject
+    SettingsRepository settingsRepository;
 
     @Inject
     ServerRepository serverRepository;
@@ -54,9 +57,10 @@ public class ServerRepositoryService implements ServerService {
     @Override
     public ServerList servers() {
         try {
+            Settings settings = settingsRepository.settings();
             return ServerList.builder()
                     .online(userRepository.usersOnline())
-                    .bannerMessage(message.orElse(null))
+                    .bannerMessage(settings.getBannerMessage())
                     .statuses(serverRepository.servers())
                     .build();
         } catch (Exception ex) {

@@ -33,7 +33,9 @@ import javax.ws.rs.core.Response.Status;
 /**
  * Implementation for {@link PostController} which utilizes
  * {@link PostService} to find the requested post and produce
- * the payload which contains it.
+ * the payload which contains it.  For updates, deletes, and
+ * creates the user must be authorized and this is checked
+ * via consulting the active session via {@link UserService}.
  *
  * @author Brenterino
  * @since 1.0.0.1
@@ -68,10 +70,11 @@ public class PostServiceController implements PostController {
 
     @Override
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Post post) {
         UserStatus status = userService.session();
         post.setAuthor(status.getUsername());
-        if (status.getGmLevel() > UserStatus.UNAUTHORIZED_LEVEL)
+        if (status.isAuthorizedUser())
             return Response.ok(postService.create(post))
                     .build();
         else
@@ -84,7 +87,7 @@ public class PostServiceController implements PostController {
     @Path("/{id}")
     public Response delete(@PathParam("id") long id) {
         UserStatus status = userService.session();
-        if (status.getGmLevel() > UserStatus.UNAUTHORIZED_LEVEL)
+        if (status.isAuthorizedUser())
             return Response.ok(postService.delete(id))
                     .build();
         else
@@ -95,9 +98,10 @@ public class PostServiceController implements PostController {
     @Override
     @PATCH
     @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") long id, Post post) {
         UserStatus status = userService.session();
-        if (status.getGmLevel() > UserStatus.UNAUTHORIZED_LEVEL)
+        if (status.isAuthorizedUser())
             return Response.ok(postService.update(id, post))
                     .build();
         else

@@ -37,6 +37,8 @@
         <!-- Needed for Infinispan CDI to work, even if we do not use it -->
         <local-cache name="default"/>
 
+        <!-- Settings Caches -->
+        <local-cache name="SettingsCache"/>
         <!-- User Caches -->
         <local-cache name="UsersOnlineCache" configuration="ShortTermCache"/>
         <!-- Server Status Caches -->

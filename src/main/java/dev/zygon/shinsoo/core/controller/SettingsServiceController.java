@@ -17,10 +17,10 @@
 */
 package dev.zygon.shinsoo.core.controller;
 
-import dev.zygon.shinsoo.controller.NewsController;
-import dev.zygon.shinsoo.message.Paginated;
+import dev.zygon.shinsoo.controller.SettingsController;
+import dev.zygon.shinsoo.message.Settings;
 import dev.zygon.shinsoo.message.UserStatus;
-import dev.zygon.shinsoo.service.PostService;
+import dev.zygon.shinsoo.service.SettingsService;
 import dev.zygon.shinsoo.service.UserService;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,55 +28,52 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 /**
- * Implementation for {@link NewsController} which utilizes
- * {@link PostService} to produce a paginated list of posts
- * based on a requested page. In order to load all of the
- * posts in the database in one list the user must be
- * authorized and this is checked via consulting the active
- * session via {@link UserService}.
+ * Implementation for {@link SettingsController} which utilizes
+ * {@link SettingsService} to produce a payload of settings and
+ * update them as requested. All direct accesses to this routes
+ * requires the session to be with an authorized user.  This is
+ * verified through consulting the active session via
+ * {@link UserService}.
  *
  * @author Brenterino
  * @since 1.0.0.1
  * @version 1.0.0.1
  */
 @ApplicationScoped
-@Path("/news")
+@Path("/settings")
 @Produces(MediaType.APPLICATION_JSON)
-public class NewsServiceController implements NewsController {
+public class SettingsServiceController implements SettingsController {
 
     @Inject
-    PostService postService;
+    SettingsService settingsService;
 
     @Inject
     UserService userService;
 
     @Override
     @GET
-    public Response news() {
-        return news(Paginated.DEFAULT_PAGE);
-    }
-
-    @Override
-    @GET
-    @Path("/{page}")
-    public Response news(@PathParam("page") long page) {
-        return Response.ok(postService.posts(page))
-                .build();
-    }
-
-    @Override
-    @GET
-    @Path("/all")
-    public Response all() {
+    public Response settings() {
         UserStatus status = userService.session();
         if (status.isAuthorizedUser())
-            return Response.ok(postService.posts())
+        return Response.ok(settingsService.settings())
+                .build();
+        else
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .build();
+    }
+
+    @Override
+    @PATCH
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response update(Settings settings) {
+        UserStatus status = userService.session();
+        if (status.isAuthorizedUser())
+            return Response.ok(settingsService.update(settings))
                     .build();
         else
-            return Response.status(Status.UNAUTHORIZED)
+            return Response.status(Response.Status.UNAUTHORIZED)
                     .build();
     }
 }

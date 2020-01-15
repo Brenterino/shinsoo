@@ -138,9 +138,9 @@ public class PostRepositoryService implements PostService {
             if (repository.create(post))
                 return createSuccessfulOperationMessage("Successfully created post.");
             else
-                return createFailedOperationMessage("Post could not be inserted for an unknown reason.");
+                return createFailedOperationMessage("Post could not be created for an unknown reason.");
         } catch (Exception ex) {
-            log.error("Unable to insert post into repository.", ex);
+            log.error("Unable to create post in repository.", ex);
             return createFailedOperationMessage("Unable to insert post into repository. Try again later.");
         }
     }

@@ -17,49 +17,24 @@
 */
 package dev.zygon.shinsoo.message;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 /**
- * Represents status of the user accessing the site.  This
- * contains session information that the backend has verified
- * for the user and allows the front end to enable certain
- * content.
+ * Data object which contains information about settings for the
+ * service.
  *
  * @author Brenterino
  * @since 1.0.0.1
  * @version 1.0.0.1
  */
 @Data
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserStatus {
-
-    @JsonIgnore
-    public static final int LOGGED_OUT_STATUS = 0;
-
-    @JsonIgnore
-    public static final int UNAUTHORIZED_LEVEL = 0;
+public class Settings {
 
     @Builder.Default
-    @JsonProperty("logged_in")
-    private boolean loggedIn = false;
-
-    @Builder.Default
-    private String username = "";
-
-    @Builder.Default
-    @JsonProperty("mapleid")
-    private String mapleId = "";
-
-    @Builder.Default
-    @JsonProperty("gm_level")
-    private int gmLevel = 0;
-
-    public boolean isAuthorizedUser() {
-        return gmLevel > UNAUTHORIZED_LEVEL;
-    }
+    @JsonProperty("alert")
+    private String bannerMessage = "";
 }

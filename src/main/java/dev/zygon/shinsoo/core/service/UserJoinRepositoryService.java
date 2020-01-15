@@ -83,7 +83,7 @@ public class UserJoinRepositoryService implements UserJoinService {
             else
                 return createUser(createDetailsFromCredentials(credentials));
         } catch (Exception ex) {
-            log.error("Something went wrong while trying to insert new user into database.", ex);
+            log.error("Something went wrong while trying to insert new user into repository.", ex);
             return createFailedJoinResponse("Registration failed due to database issues.");
         }
     }
