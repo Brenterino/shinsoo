@@ -6,6 +6,8 @@
   "user.email.column": "email",
   "user.gm.level.column": "gm_level",
   "user.login.status.column": "status",
+  "user.votes.column": "votes",
+  "user.last.voted.column": "lastVoted",
 
   "player.table": "player",
   "player.rank.column": "rank",

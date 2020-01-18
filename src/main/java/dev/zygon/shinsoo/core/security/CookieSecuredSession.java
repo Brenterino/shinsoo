@@ -47,7 +47,7 @@ import java.util.Optional;
 public class CookieSecuredSession implements SecuredSession {
 
     private static final String SESSION_NONCE = "SESSION_NONCE";
-    private static final long HOURS_TO_MILLISECONDS = 3600000;
+    private static final long HOURS_TO_SECONDS = 3600;
 
     @CookieParam(SESSION_NONCE)
     String nonce;
@@ -91,7 +91,7 @@ public class CookieSecuredSession implements SecuredSession {
     private UserStatus beginSession(UserStatus status) {
         String cookieNonce = generator.nonce(status.getUsername());
         try {
-            session.beginSession(cookieNonce, status, expirationHoursToMilliseconds());
+            session.beginSession(cookieNonce, status, expirationHoursToSeconds());
             status.setLoggedIn(true);
             return holdCookie(cookieNonce, status);
         } catch (Exception ex) {
@@ -101,8 +101,8 @@ public class CookieSecuredSession implements SecuredSession {
         }
     }
 
-    private long expirationHoursToMilliseconds() {
-        return expirationHours * HOURS_TO_MILLISECONDS;
+    private long expirationHoursToSeconds() {
+        return expirationHours * HOURS_TO_SECONDS;
     }
 
     @Override

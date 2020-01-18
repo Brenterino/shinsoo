@@ -34,6 +34,8 @@ public class DSLKeys {
     public static final String USER_EMAIL_COLUMN = "user.email.column";
     public static final String USER_GM_LEVEL_COLUMN = "user.gm.level.column";
     public static final String USER_LOGIN_STATUS_COLUMN = "user.login.status.column";
+    public static final String USER_VOTES_COLUMN = "user.votes.column";
+    public static final String USER_LAST_VOTED_COLUMN = "user.last.voted.column";
 
     public static final String PLAYER_TABLE = "player.table";
     public static final String PLAYER_RANK_COLUMN = "player.rank.column";

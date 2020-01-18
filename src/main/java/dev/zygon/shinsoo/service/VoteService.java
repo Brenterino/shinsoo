@@ -15,16 +15,20 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-package dev.zygon.shinsoo.validation;
+package dev.zygon.shinsoo.service;
+
+import dev.zygon.shinsoo.message.VotePingback;
 
 /**
- * Utility to validate if a form is valid or not.
+ * Service which processes request made to the vote pingback
+ * URL.  Resolves whether or not the request can be accepted
+ * or not.
  *
  * @author Brenterino
  * @since 1.0.0.1
  * @version 1.0.0.1
  */
-public interface FormValidator {
+public interface VoteService {
 
-    FormFailures validate();
+    boolean process(VotePingback pingback);
 }

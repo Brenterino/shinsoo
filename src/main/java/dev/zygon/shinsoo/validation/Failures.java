@@ -23,7 +23,7 @@ import lombok.Getter;
 import java.util.function.Supplier;
 
 /**
- * Listing of all possible form failures associated with the application
+ * Listing of all possible failures associated with the application
  * and messages displayed to the user if that failure is applicable.
  *
  * @author Brenterino
@@ -32,7 +32,7 @@ import java.util.function.Supplier;
  */
 @Getter
 @AllArgsConstructor
-public enum FormFailures {
+public enum Failures {
 
     NAME_EMPTY("Name must not be empty."),
     EMAIL_EMPTY("Email must not be empty."),
@@ -53,12 +53,13 @@ public enum FormFailures {
     INVALID_POST_TYPE("Post type is too short or invalid."),
     INVALID_POST_TITLE("Post title is too short or invalid."),
     INVALID_POST_CONTENT("Post content is too short or invalid."),
-    NONE(""),
-    ;
+    BAD_REQUEST_SOURCE("Source of request is not authorized."),
+    VOTE_FAILED("Vote for user was not successful."),
+    NONE("");
 
     private String message;
 
-    public FormFailures or(Supplier<FormFailures> checker) {
+    public Failures or(Supplier<Failures> checker) {
         if (this == NONE)
             return checker.get();
         return this;

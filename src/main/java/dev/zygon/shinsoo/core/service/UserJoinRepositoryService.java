@@ -20,7 +20,7 @@ package dev.zygon.shinsoo.core.service;
 import dev.zygon.shinsoo.core.dto.UserDetails;
 import dev.zygon.shinsoo.core.validation.JoinFormValidator;
 import dev.zygon.shinsoo.message.SimpleResponse;
-import dev.zygon.shinsoo.validation.FormFailures;
+import dev.zygon.shinsoo.validation.Failures;
 import dev.zygon.shinsoo.message.JoinCredentials;
 import dev.zygon.shinsoo.repository.UserRepository;
 import dev.zygon.shinsoo.security.Encoder;
@@ -62,8 +62,8 @@ public class UserJoinRepositoryService implements UserJoinService {
     @Override
     public SimpleResponse<?> join(JoinCredentials credentials) {
         JoinFormValidator validator = new JoinFormValidator(credentials, tokenValidator);
-        FormFailures formFailures = validator.validate();
-        if (formFailures == FormFailures.NONE)
+        Failures formFailures = validator.validate();
+        if (formFailures == Failures.NONE)
             return attemptJoin(credentials);
         else
             return createFailedJoinResponse(formFailures.getMessage());

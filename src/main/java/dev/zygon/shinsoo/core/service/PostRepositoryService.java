@@ -21,7 +21,7 @@ import dev.zygon.shinsoo.core.validation.PostFormValidator;
 import dev.zygon.shinsoo.message.*;
 import dev.zygon.shinsoo.repository.PostRepository;
 import dev.zygon.shinsoo.service.PostService;
-import dev.zygon.shinsoo.validation.FormFailures;
+import dev.zygon.shinsoo.validation.Failures;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -126,8 +126,8 @@ public class PostRepositoryService implements PostService {
     @Override
     public SimpleResponse<?> create(Post post) {
         PostFormValidator validator = new PostFormValidator(post);
-        FormFailures formFailures = validator.validate();
-        if (formFailures == FormFailures.NONE)
+        Failures formFailures = validator.validate();
+        if (formFailures == Failures.NONE)
             return attemptCreate(post);
         else
             return createFailedOperationMessage(formFailures.getMessage());
@@ -161,8 +161,8 @@ public class PostRepositoryService implements PostService {
     @Override
     public SimpleResponse<?> update(long id, Post post) {
         PostFormValidator validator = new PostFormValidator(post);
-        FormFailures formFailures = validator.validate();
-        if (formFailures == FormFailures.NONE)
+        Failures formFailures = validator.validate();
+        if (formFailures == Failures.NONE)
             return attemptUpdate(id, post);
         else
             return createFailedOperationMessage(formFailures.getMessage());

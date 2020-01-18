@@ -26,7 +26,7 @@ import dev.zygon.shinsoo.repository.UserRepository;
 import dev.zygon.shinsoo.security.Checker;
 import dev.zygon.shinsoo.service.UserService;
 import dev.zygon.shinsoo.security.SecuredSession;
-import dev.zygon.shinsoo.validation.FormFailures;
+import dev.zygon.shinsoo.validation.Failures;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -68,8 +68,8 @@ public class UserRepositoryService implements UserService {
     @Override
     public SimpleResponse<?> login(LoginCredentials credentials) {
         LoginFormValidator validator = new LoginFormValidator(credentials);
-        FormFailures formFailures = validator.validate();
-        if (formFailures == FormFailures.NONE)
+        Failures formFailures = validator.validate();
+        if (formFailures == Failures.NONE)
             return attemptLogin(credentials);
         else
             return createFailedResponse(formFailures.getMessage());

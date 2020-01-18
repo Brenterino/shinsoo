@@ -17,42 +17,53 @@
 */
 package dev.zygon.shinsoo.core.validation;
 
-import dev.zygon.shinsoo.message.Post;
+import dev.zygon.shinsoo.message.VotePingback;
 import dev.zygon.shinsoo.validation.Failures;
 import dev.zygon.shinsoo.validation.Validator;
 import lombok.AllArgsConstructor;
 
+import java.util.Arrays;
+
 /**
  * Utility which implements {@link Validator} in order
- * to verify if the form used for creating or updated posts
- * was completed successfully by the user or if an error
- * exists that would prevent creating or updating the post.
+ * to verify if the pingback request from a voting service
+ * is valide or not.
  *
  * @author Brenterino
  * @since 1.0.0.1
  * @version 1.0.0.1
  */
 @AllArgsConstructor
-public class PostFormValidator implements Validator {
+public class VotePingbackValidator implements Validator {
 
-    private Post post;
+    private VotePingback pingback;
+    private String authorizedSources;
 
     @Override
     public Failures validate() {
-        return verifyNoFieldsMissing();
+        return isAuthorizedSource(pingback.getRemoteAddress())
+                .or(this::hasValidContents);
     }
 
-    private Failures verifyNoFieldsMissing() {
-        String type = post.getType().trim();
-        String title = post.getTitle().trim();
-        String content = post.getContent().trim();
+    private Failures isAuthorizedSource(String ip) {
+        if (checkAuthorization(ip))
+            return Failures.NONE;
+        else
+            return Failures.BAD_REQUEST_SOURCE;
+    }
 
-        if (type.isEmpty())
-            return Failures.INVALID_POST_TYPE;
-        else if (title.isEmpty())
-            return Failures.INVALID_POST_TITLE;
-        else if (content.isEmpty())
-            return Failures.INVALID_POST_CONTENT;
+    private boolean checkAuthorization(String ip) {
+        if (authorizedSources.isEmpty())
+            return true;
+        return Arrays.asList(authorizedSources
+                .split(",")).contains(ip);
+    }
+
+    private Failures hasValidContents() {
+        if (pingback.getMapleId().isEmpty())
+            return Failures.MAPLE_ID_EMPTY;
+        else if (pingback.getSuccess() != VotePingback.SUCCESS_CODE)
+            return Failures.VOTE_FAILED;
         else
             return Failures.NONE;
     }

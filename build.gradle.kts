@@ -22,7 +22,7 @@ version = "1.0.0.1"
 plugins {
     java
     id("io.freefair.lombok") version "4.1.6"
-    id("io.quarkus") version ("1.1.0.Final")
+    id("io.quarkus") version ("1.1.1.Final")
 }
 
 repositories {
@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation(enforcedPlatform("io.quarkus:quarkus-bom:1.1.0.Final"))
+    implementation(enforcedPlatform("io.quarkus:quarkus-bom:1.1.1.Final"))
     implementation("io.quarkus:quarkus-undertow")
     implementation("io.quarkus:quarkus-narayana-jta")
     implementation("io.quarkus:quarkus-rest-client")

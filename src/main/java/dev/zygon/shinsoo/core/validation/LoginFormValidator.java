@@ -18,8 +18,8 @@
 package dev.zygon.shinsoo.core.validation;
 
 import dev.zygon.shinsoo.message.LoginCredentials;
-import dev.zygon.shinsoo.validation.FormFailures;
-import dev.zygon.shinsoo.validation.FormValidator;
+import dev.zygon.shinsoo.validation.Failures;
+import dev.zygon.shinsoo.validation.Validator;
 import lombok.AllArgsConstructor;
 
 import java.util.regex.Matcher;
@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import static dev.zygon.shinsoo.core.validation.ValidationConstants.*;
 
 /**
- * Utility which implements {@link FormValidator} in order
+ * Utility which implements {@link Validator} in order
  * to verify if the form used for logging in was completed
  * successfully by the user or if an error exists that would
  * prevent login.
@@ -37,55 +37,55 @@ import static dev.zygon.shinsoo.core.validation.ValidationConstants.*;
  * @version 1.0.0.1
  */
 @AllArgsConstructor
-public class LoginFormValidator implements FormValidator {
+public class LoginFormValidator implements Validator {
 
     private LoginCredentials credentials;
 
     @Override
-    public FormFailures validate() {
+    public Failures validate() {
         return verifyNoFieldsMissing()
                 .or(this::verifyFieldsContainNoWhitespace)
                 .or(this::verifyFieldLengths)
                 .or(this::verifyEmail);
     }
 
-    private FormFailures verifyNoFieldsMissing() {
+    private Failures verifyNoFieldsMissing() {
         if (credentials.getEmail().isEmpty())
-            return FormFailures.EMAIL_EMPTY;
+            return Failures.EMAIL_EMPTY;
         else if (credentials.getPassword().isEmpty())
-            return FormFailures.PASSWORD_EMPTY;
-        return FormFailures.NONE;
+            return Failures.PASSWORD_EMPTY;
+        return Failures.NONE;
     }
 
-    private FormFailures verifyFieldsContainNoWhitespace() {
+    private Failures verifyFieldsContainNoWhitespace() {
         Matcher emailMatcher = WHITESPACE_PATTERN.matcher(credentials.getEmail());
         Matcher passwordMatcher = WHITESPACE_PATTERN.matcher(credentials.getPassword());
 
         if (emailMatcher.matches())
-            return FormFailures.INVALID_EMAIL;
+            return Failures.INVALID_EMAIL;
         else if (passwordMatcher.matches())
-            return FormFailures.INVALID_PASSWORD;
+            return Failures.INVALID_PASSWORD;
         else
-            return FormFailures.NONE;
+            return Failures.NONE;
     }
 
-    private FormFailures verifyFieldLengths() {
+    private Failures verifyFieldLengths() {
         String email = credentials.getEmail();
         String password = credentials.getPassword();
 
         if (email.length() > MAXIMUM_EMAIL_SIZE)
-            return FormFailures.INVALID_EMAIL;
+            return Failures.INVALID_EMAIL;
         else if (password.length() < MINIMUM_FIELD_SIZE || password.length() > MAXIMUM_FIELD_SIZE)
-            return FormFailures.PASSWORD_SIZE_OUT_OF_BOUNDS;
+            return Failures.PASSWORD_SIZE_OUT_OF_BOUNDS;
         else
-            return FormFailures.NONE;
+            return Failures.NONE;
     }
 
-    private FormFailures verifyEmail() {
+    private Failures verifyEmail() {
         Matcher matcher = EMAIL_PATTERN.matcher(credentials.getEmail());
         if (matcher.matches())
-            return FormFailures.NONE;
+            return Failures.NONE;
         else
-            return FormFailures.INVALID_EMAIL;
+            return Failures.INVALID_EMAIL;
     }
 }
