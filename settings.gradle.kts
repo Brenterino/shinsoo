@@ -24,7 +24,7 @@ pluginManagement {
     }
 
     plugins {
-      id("io.quarkus") version ("1.1.0.Final")
+      id("io.quarkus") version ("1.1.1.Final")
     }
 }
 

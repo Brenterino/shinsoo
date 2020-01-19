@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Collections;
+
 /**
  * Represents a response which has its full results split across
  * multiple pages.
@@ -58,4 +60,22 @@ public class Paginated<E> extends SimpleResponse<E> {
     @Builder.Default
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private long last = 0;
+
+    public static <T> Paginated<T> success(T data, long page, long totalPages) {
+        return Paginated.<T>builder()
+                .success(true)
+                .prev(Math.max(page - 1, 1))
+                .current(page)
+                .next(Math.min(page + 1, totalPages))
+                .last(totalPages)
+                .data(data)
+                .build();
+    }
+
+    public static <T> Paginated<T> failure(String message) {
+        return Paginated.<T>builder()
+                .success(false)
+                .error(Collections.singletonList(message))
+                .build();
+    }
 }

@@ -31,9 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import java.util.List;
-
-import static java.util.Collections.singletonList;
+import static dev.zygon.shinsoo.message.SimpleResponse.failure;
+import static dev.zygon.shinsoo.message.SimpleResponse.success;
 
 /**
  * Implementation for {@link UserJoinService} which utilizes
@@ -66,7 +65,7 @@ public class UserJoinRepositoryService implements UserJoinService {
         if (formFailures == Failures.NONE)
             return attemptJoin(credentials);
         else
-            return createFailedJoinResponse(formFailures.getMessage());
+            return failure(formFailures.getMessage());
     }
 
     private SimpleResponse<?> attemptJoin(JoinCredentials credentials) {
@@ -75,16 +74,16 @@ public class UserJoinRepositoryService implements UserJoinService {
         String email = credentials.getEmail();
         try {
             if (repository.userExists(username))
-                return createFailedJoinResponse("User with this username exists already!");
+                return failure("User with this username exists already!");
             else if (repository.idExists(mapleId))
-                return createFailedJoinResponse("User with this Maple ID exists already!");
+                return failure("User with this Maple ID exists already!");
             else if (repository.emailExists(email))
-                return createFailedJoinResponse("User with this email exists already!");
+                return failure("User with this email exists already!");
             else
                 return createUser(createDetailsFromCredentials(credentials));
         } catch (Exception ex) {
             log.error("Something went wrong while trying to insert new user into repository.", ex);
-            return createFailedJoinResponse("Registration failed due to database issues.");
+            return failure("Registration failed due to database issues.");
         }
     }
 
@@ -101,22 +100,8 @@ public class UserJoinRepositoryService implements UserJoinService {
 
     private SimpleResponse<?> createUser(UserDetails details) throws Exception {
         if (repository.create(details))
-            return createSuccessfulJoinResponse();
+            return success("You have successfully joined!");
         else
-            return createFailedJoinResponse("Something unexpected happened while saving. Please try again.");
-    }
-
-    private static SimpleResponse<?> createFailedJoinResponse(String message) {
-        return SimpleResponse.<List<String>>builder()
-                .success(false)
-                .error(singletonList(message))
-                .build();
-    }
-
-    private static SimpleResponse<?> createSuccessfulJoinResponse() {
-        return SimpleResponse.<List<String>>builder()
-                .success(true)
-                .data(singletonList("You have successfully joined!"))
-                .build();
+            return failure("Something unexpected happened while saving. Please try again.");
     }
 }

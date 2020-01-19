@@ -32,8 +32,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.Collections;
 
+import static dev.zygon.shinsoo.message.SimpleResponse.failure;
+import static dev.zygon.shinsoo.message.SimpleResponse.success;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,10 +56,7 @@ class PostServiceControllerTest {
 
     @Test
     void whenPostIsQueriedWithNoIdPostServiceIsCalledWithUnknownPost() {
-        SimpleResponse<Post> simpleResponse = SimpleResponse.<Post>builder()
-                .success(false)
-                .error(Collections.singletonList("Unknown post."))
-                .build();
+        SimpleResponse<Post> simpleResponse = failure("Unknown post.");
         when(postService.post(PostServiceController.UNKNOWN_POST))
                 .thenReturn(simpleResponse);
 
@@ -70,10 +68,7 @@ class PostServiceControllerTest {
 
     @Test
     void whenPostIsQueriedWithPostIdPostServiceIsCalled() {
-        SimpleResponse<Post> simpleResponse = SimpleResponse.<Post>builder()
-                .success(true)
-                .data(new Post())
-                .build();
+        SimpleResponse<Post> simpleResponse = success(new Post());
         when(postService.post(anyLong()))
                 .thenReturn(simpleResponse);
 
@@ -135,10 +130,7 @@ class PostServiceControllerTest {
             when(userService.session())
                     .thenReturn(authorizedUser);
 
-            responseMessage = SimpleResponse.<String>builder()
-                    .success(true)
-                    .data("Hello, world!")
-                    .build();
+            responseMessage = success("Hello, world!");
         }
 
         @Test

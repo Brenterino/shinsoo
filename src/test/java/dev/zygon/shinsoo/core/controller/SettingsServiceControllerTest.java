@@ -33,6 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import static dev.zygon.shinsoo.message.SimpleResponse.success;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -95,10 +96,7 @@ class SettingsServiceControllerTest {
             when(userService.session())
                     .thenReturn(authorizedUser);
 
-            responseMessage = SimpleResponse.<String>builder()
-                    .success(true)
-                    .data("Hello, world!")
-                    .build();
+            responseMessage = success("Hello, world!");
         }
 
         @Test

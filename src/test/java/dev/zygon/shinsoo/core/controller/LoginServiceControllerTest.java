@@ -30,8 +30,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.Collections;
 
+import static dev.zygon.shinsoo.message.SimpleResponse.failure;
+import static dev.zygon.shinsoo.message.SimpleResponse.success;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -47,10 +48,7 @@ class LoginServiceControllerTest {
 
     @Test
     void whenServiceLoginFailsAndNoDataIsAvailableNoCookieIsAttachedToResponse() {
-        SimpleResponse failResponse = SimpleResponse.builder()
-                .success(false)
-                .error(Collections.singletonList(":feelsbadman:"))
-                .build();
+        SimpleResponse failResponse = failure(":feelsbadman:");
         when(service.login(any(LoginCredentials.class)))
                 .thenReturn(failResponse);
 
@@ -65,10 +63,7 @@ class LoginServiceControllerTest {
         CookieHoldingUserStatus status = CookieHoldingUserStatus.builder()
                 .cookie(new NewCookie("big", "cookie"))
                 .build();
-        SimpleResponse successResponse = SimpleResponse.<CookieHoldingUserStatus>builder()
-                .success(true)
-                .data(status)
-                .build();
+        SimpleResponse successResponse = success(status);
         when(service.login(any(LoginCredentials.class)))
                 .thenReturn(successResponse);
 

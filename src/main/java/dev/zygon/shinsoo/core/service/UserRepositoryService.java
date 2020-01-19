@@ -33,7 +33,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
+import static dev.zygon.shinsoo.message.SimpleResponse.*;
 
 /**
  * Implementation for {@link UserService} which utilizes
@@ -72,7 +72,7 @@ public class UserRepositoryService implements UserService {
         if (formFailures == Failures.NONE)
             return attemptLogin(credentials);
         else
-            return createFailedResponse(formFailures.getMessage());
+            return failure(formFailures.getMessage());
     }
 
     private SimpleResponse<?> attemptLogin(LoginCredentials credentials) {
@@ -85,9 +85,9 @@ public class UserRepositoryService implements UserService {
             if (checker.check(password, details.getPassword()))
                 return doLogin(details);
             else
-                return createFailedResponse("Incorrect password.");
+                return failure("Incorrect password.");
         } else {
-            return createFailedResponse("No account with this email exists.");
+            return failure("No account with this email exists.");
         }
     }
 
@@ -95,9 +95,9 @@ public class UserRepositoryService implements UserService {
         UserStatus status = session.begin(createStatusFromDetails(details));
 
         if (status.isLoggedIn())
-            return createSuccessfulResponse(status);
+            return success(status);
         else
-            return createFailedResponse("Unable to begin session. Please try again.");
+            return failure("Unable to begin session. Please try again.");
     }
 
     private UserStatus createStatusFromDetails(UserDetails details) {
@@ -123,28 +123,14 @@ public class UserRepositoryService implements UserService {
         if (session.status().isLoggedIn())
             return doLogout();
         else
-            return createFailedResponse("Currently not logged in.");
+            return failure("Currently not logged in.");
     }
 
     private SimpleResponse<?> doLogout() {
         UserStatus status = session.end();
         if (status.isLoggedIn())
-            return createFailedResponse("Something went wrong when logging out. Please try again.");
+            return failure("Something went wrong when logging out. Please try again.");
         else
-            return createSuccessfulResponse(status);
-    }
-
-    private static SimpleResponse<?> createFailedResponse(String message) {
-        return SimpleResponse.<UserStatus>builder()
-                .success(false)
-                .error(singletonList(message))
-                .build();
-    }
-
-    private static SimpleResponse<?> createSuccessfulResponse(UserStatus status) {
-        return SimpleResponse.<UserStatus>builder()
-                .success(true)
-                .data(status)
-                .build();
+            return success(status);
     }
 }

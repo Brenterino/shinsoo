@@ -27,6 +27,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.List;
 
+import static dev.zygon.shinsoo.message.Paginated.failure;
+import static dev.zygon.shinsoo.message.Paginated.success;
 import static java.util.Collections.singletonList;
 
 /**
@@ -56,16 +58,16 @@ public class RankingRepositoryService implements RankingService {
     public Paginated<?> rankings(long page) {
         try {
             long totalPages = (long) Math.ceil(repository.count() / (double) Paginated.DEFAULT_PAGE_SIZE);
-            if (page < 0 || page > totalPages)
-                return createFailedPagination("No results to display.");
+            if (page <= 0 || page > totalPages)
+                return failure("No results to display.");
             else {
                 long offset = (page - 1) * Paginated.DEFAULT_PAGE_SIZE;
                 List<Player> players = repository.players(offset, Paginated.DEFAULT_PAGE_SIZE);
-                return createPaginatedRankings(players, page, totalPages);
+                return success(players, page, totalPages);
             }
         } catch (Exception ex) {
             log.error("Unable to load paginated rankings from repository.", ex);
-            return createFailedPagination("Unable to load rankings. Please try again later.");
+            return failure("Unable to load rankings. Please try again later.");
         }
     }
 
@@ -73,20 +75,20 @@ public class RankingRepositoryService implements RankingService {
     public Paginated<?> jobRankings(String job, long page) {
         JobRange range = JobRange.fromName(job);
         if (range == JobRange.UNKNOWN)
-            return createFailedPagination("Select a job.");
+            return failure("Select a job.");
 
         try {
             long totalPages = (long) Math.ceil(repository.countJob(range) / (double) Paginated.DEFAULT_PAGE_SIZE);
-            if (page < 0 || page > totalPages)
-                return createFailedPagination("No results to display.");
+            if (page <= 0 || page > totalPages)
+                return failure("No results to display.");
             else {
                 long offset = (page - 1) * Paginated.DEFAULT_PAGE_SIZE;
                 List<Player> players = repository.playersByJob(range, offset, Paginated.DEFAULT_PAGE_SIZE);
-                return createPaginatedRankings(players, page, totalPages);
+                return success(players, page, totalPages);
             }
         } catch (Exception ex) {
             log.error("Unable to load paginated job rankings from repository.", ex);
-            return createFailedPagination("Unable to load rankings. Please try again later.");
+            return failure("Unable to load rankings. Please try again later.");
         }
     }
 
@@ -94,35 +96,17 @@ public class RankingRepositoryService implements RankingService {
     public Paginated<?> fameRankings(long page) {
         try {
             long totalPages = (long) Math.ceil(repository.count() / (double) Paginated.DEFAULT_PAGE_SIZE);
-            if (page < 0 || page > totalPages)
-                return createFailedPagination("No results to display.");
+            if (page <= 0 || page > totalPages)
+                return failure("No results to display.");
             else {
                 long offset = (page - 1) * Paginated.DEFAULT_PAGE_SIZE;
                 List<Player> players = repository.playersByFame(offset, Paginated.DEFAULT_PAGE_SIZE);
-                return createPaginatedRankings(players, page, totalPages);
+                return success(players, page, totalPages);
             }
         } catch (Exception ex) {
             log.error("Unable to load paginated job rankings from repository.", ex);
-            return createFailedPagination("Unable to load rankings. Please try again later.");
+            return failure("Unable to load rankings. Please try again later.");
         }
-    }
-
-    private Paginated<?> createFailedPagination(String message) {
-        return Paginated.<Void>builder()
-                .success(false)
-                .error(singletonList(message))
-                .build();
-    }
-
-    private Paginated<?> createPaginatedRankings(List<Player> players, long page, long totalPages) {
-        return Paginated.<List<Player>>builder()
-                .success(true)
-                .prev(Math.max(page - 1, 1))
-                .current(page)
-                .next(Math.min(page + 1, totalPages))
-                .last(totalPages)
-                .data(players)
-                .build();
     }
 
     @Override
@@ -136,7 +120,8 @@ public class RankingRepositoryService implements RankingService {
             List<Player> players = repository.searchByQuery(query);
             if (players.isEmpty())
                 return createFailedPayload("No characters match " + query + ".");
-            return createPayloadResults(players);
+            else
+                return createPayloadResults(players);
         } catch (Exception ex) {
             log.error("Unable to search for player(s) from repository.", ex);
             return createFailedPayload("Unable to find players. Please try again later.");

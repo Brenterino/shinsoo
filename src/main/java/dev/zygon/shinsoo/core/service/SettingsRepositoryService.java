@@ -25,9 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.List;
 
-import static java.util.Collections.singletonList;
+import static dev.zygon.shinsoo.message.SimpleResponse.*;
 
 /**
  * Implementation for {@link SettingsService} which utilizes
@@ -48,44 +47,23 @@ public class SettingsRepositoryService implements SettingsService {
     @Override
     public SimpleResponse<?> settings() {
         try {
-            return createSettingsPayload(repository.settings());
+            return success(repository.settings());
         } catch (Exception ex) {
             log.error("Something went wrong when trying to retrieve settings from the repository.", ex);
-            return createFailedResponse("Unable to load settings from repository. Try again later.");
+            return failure("Unable to load settings from repository. Try again later.");
         }
-    }
-
-    private SimpleResponse<?> createSettingsPayload(Settings settings) {
-        return SimpleResponse.<Settings>builder()
-                .success(true)
-                .data(settings)
-                .build();
     }
 
     @Override
     public SimpleResponse<?> update(Settings settings) {
         try {
             if (repository.update(settings))
-                return createSuccessfulResponse("Successfully updated settings.");
+                return success("Successfully updated settings.");
             else
-                return createFailedResponse("Something unexpected happened when updating settings. Please try again.");
+                return failure("Something unexpected happened when updating settings. Please try again.");
         } catch (Exception ex) {
             log.error("Something went wrong when trying to update settings in the repository.", ex);
-            return createFailedResponse("Unable to update settings in repository. Try again later.");
+            return failure("Unable to update settings in repository. Try again later.");
         }
-    }
-
-    private SimpleResponse<?> createFailedResponse(String message) {
-        return SimpleResponse.<Void>builder()
-                .success(false)
-                .error(singletonList(message))
-                .build();
-    }
-
-    private SimpleResponse<?> createSuccessfulResponse(String message) {
-        return SimpleResponse.<List<String>>builder()
-                .success(true)
-                .data(singletonList(message))
-                .build();
     }
 }

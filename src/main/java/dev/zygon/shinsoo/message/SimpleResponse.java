@@ -49,4 +49,18 @@ public class SimpleResponse<E> {
     @Builder.Default
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<String> error = Collections.emptyList();
+
+    public static <T> SimpleResponse<T> success(T data) {
+        return SimpleResponse.<T>builder()
+                .success(true)
+                .data(data)
+                .build();
+    }
+
+    public static <T> SimpleResponse<T> failure(String message) {
+        return SimpleResponse.<T>builder()
+                .success(false)
+                .error(Collections.singletonList(message))
+                .build();
+    }
 }

@@ -23,9 +23,7 @@ import dev.zygon.shinsoo.service.UserResetService;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import java.util.List;
-
-import static java.util.Collections.singletonList;
+import static dev.zygon.shinsoo.message.SimpleResponse.failure;
 
 /**
  * Implementation for {@link UserResetService} that
@@ -41,9 +39,6 @@ public class UserResetNoService implements UserResetService {
 
     @Override
     public SimpleResponse<?> reset(ResetCredentials credentials) {
-        return SimpleResponse.<List<String>>builder()
-                .success(false)
-                .error(singletonList("Feature is not supported."))
-                .build();
+        return failure("Feature is not supported.");
     }
 }

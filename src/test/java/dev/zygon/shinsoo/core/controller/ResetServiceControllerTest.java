@@ -27,8 +27,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.ws.rs.core.Response;
-import java.util.Collections;
 
+import static dev.zygon.shinsoo.message.SimpleResponse.failure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -44,10 +44,7 @@ class ResetServiceControllerTest {
 
     @Test
     void whenResetIsRequestedServiceProcessesItAndReturnsAResponse() {
-        SimpleResponse simpleResponse = SimpleResponse.builder()
-                .success(false)
-                .error(Collections.singletonList("Unsupported"))
-                .build();
+        SimpleResponse simpleResponse = failure("Unsupported");
         when(service.reset(any(ResetCredentials.class)))
                 .thenReturn(simpleResponse);
 

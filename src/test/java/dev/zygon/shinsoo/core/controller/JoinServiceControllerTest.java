@@ -29,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import static dev.zygon.shinsoo.message.SimpleResponse.success;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -44,10 +45,7 @@ class JoinServiceControllerTest {
 
     @Test
     void whenJoinIsCalledRequestIsAcceptedByUserJoinServiceAndResponseIsProvidedByUserJoinService() {
-        SimpleResponse simpleResponse = SimpleResponse.<String>builder()
-                .success(true)
-                .data("Hello, world!")
-                .build();
+        SimpleResponse simpleResponse = success("Hello, world!");
         when(service.join(any(JoinCredentials.class)))
                 .thenReturn(simpleResponse);
 
