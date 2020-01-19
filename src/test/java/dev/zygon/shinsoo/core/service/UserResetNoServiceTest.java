@@ -15,35 +15,25 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-package dev.zygon.shinsoo.message;
+package dev.zygon.shinsoo.core.service;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.MediaType;
+import dev.zygon.shinsoo.message.ResetCredentials;
+import dev.zygon.shinsoo.message.SimpleResponse;
+import org.junit.jupiter.api.Test;
 
-import lombok.*;
-import org.jboss.resteasy.annotations.providers.multipart.PartType;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- * Message which is sent by the front end when the user submits
- * the login form.
- *
- * @author Brenterino
- * @since 1.0.0.1
- * @version 1.0.0.1
- */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class LoginCredentials {
+class UserResetNoServiceTest {
 
-    @Builder.Default
-    @FormParam("email")
-    @PartType(MediaType.TEXT_PLAIN)
-    private String email = "";
+    private UserResetNoService service = new UserResetNoService();
 
-    @Builder.Default
-    @FormParam("password")
-    @PartType(MediaType.TEXT_PLAIN)
-    private String password = "";
+    @Test
+    void whenResetIsRequestedFailureMessageIsReturnedAsFunctionalityIsNotSupported() {
+        SimpleResponse<?> response = service.reset(new ResetCredentials());
+
+        assertFalse(response.isSuccess());
+        assertNull(response.getData());
+        assertFalse(response.getError().isEmpty());
+    }
 }

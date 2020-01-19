@@ -32,31 +32,38 @@ import javax.ws.rs.core.MediaType;
  * @version 1.0.0.1
  */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class JoinCredentials {
 
+    @Builder.Default
     @FormParam("name")
     @PartType(MediaType.TEXT_PLAIN)
-    private String name;
+    private String name = "";
 
+    @Builder.Default
     @FormParam("email")
     @PartType(MediaType.TEXT_PLAIN)
-    private String email;
+    private String email = "";
 
+    @Builder.Default
     @FormParam("mapleid")
     @PartType(MediaType.TEXT_PLAIN)
-    private String mapleId;
+    private String mapleId = "";
 
+    @Builder.Default
     @FormParam("password")
     @PartType(MediaType.TEXT_PLAIN)
-    private String password;
+    private String password = "";
 
+    @Builder.Default
     @FormParam("password_confirmation")
     @PartType(MediaType.TEXT_PLAIN)
-    private String confirmation;
+    private String confirmation = "";
 
+    @Builder.Default
     @FormParam("g-recaptcha-response")
     @PartType(MediaType.TEXT_PLAIN)
-    private String token;
+    private String token = "";
 }
