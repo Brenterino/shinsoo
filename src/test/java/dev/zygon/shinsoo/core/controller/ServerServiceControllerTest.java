@@ -17,9 +17,8 @@
 */
 package dev.zygon.shinsoo.core.controller;
 
-import dev.zygon.shinsoo.message.UserStatus;
-import dev.zygon.shinsoo.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
+import dev.zygon.shinsoo.message.ServerList;
+import dev.zygon.shinsoo.service.ServerService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,35 +26,28 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class IndexServiceControllerTest {
-
-    private UserStatus status;
+class ServerServiceControllerTest {
 
     @Mock
-    private UserService service;
+    private ServerService service;
 
     @InjectMocks
-    private IndexServiceController controller;
-
-    @BeforeEach
-    void setup() {
-        status = new UserStatus();
-    }
+    private ServerServiceController controller;
 
     @Test
-    void whenIndexIsCalledUserStatusIsRetrievedFromService() {
-        when(service.session())
-                .thenReturn(status);
+    void whenServerIsRequestedServiceProducesAResponse() {
+        ServerList servers = new ServerList();
+        when(service.servers())
+                .thenReturn(servers);
 
-        Response response = controller.index();
+        Response response = controller.server();
 
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(status, response.getEntity());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(servers, response.getEntity());
     }
 }

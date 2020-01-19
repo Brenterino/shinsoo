@@ -46,7 +46,7 @@ import javax.ws.rs.core.Response.Status;
 @Produces(MediaType.APPLICATION_JSON)
 public class PostServiceController implements PostController {
 
-    private static final int UNKNOWN_POST = 0;
+    static final int UNKNOWN_POST = 0;
 
     @Inject
     PostService postService;

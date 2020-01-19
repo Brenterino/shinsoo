@@ -17,9 +17,9 @@
 */
 package dev.zygon.shinsoo.core.controller;
 
-import dev.zygon.shinsoo.message.UserStatus;
-import dev.zygon.shinsoo.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
+import dev.zygon.shinsoo.message.JoinCredentials;
+import dev.zygon.shinsoo.message.SimpleResponse;
+import dev.zygon.shinsoo.service.UserJoinService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,32 +30,30 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class IndexServiceControllerTest {
-
-    private UserStatus status;
+class JoinServiceControllerTest {
 
     @Mock
-    private UserService service;
+    private UserJoinService service;
 
     @InjectMocks
-    private IndexServiceController controller;
-
-    @BeforeEach
-    void setup() {
-        status = new UserStatus();
-    }
+    private JoinServiceController controller;
 
     @Test
-    void whenIndexIsCalledUserStatusIsRetrievedFromService() {
-        when(service.session())
-                .thenReturn(status);
+    void whenJoinIsCalledRequestIsAcceptedByUserJoinServiceAndResponseIsProvidedByUserJoinService() {
+        SimpleResponse simpleResponse = SimpleResponse.<String>builder()
+                .success(true)
+                .data("Hello, world!")
+                .build();
+        when(service.join(any(JoinCredentials.class)))
+                .thenReturn(simpleResponse);
 
-        Response response = controller.index();
+        Response response = controller.join(new JoinCredentials());
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(status, response.getEntity());
+        assertEquals(simpleResponse, response.getEntity());
     }
 }

@@ -57,8 +57,8 @@ public class SettingsServiceController implements SettingsController {
     public Response settings() {
         UserStatus status = userService.session();
         if (status.isAuthorizedUser())
-        return Response.ok(settingsService.settings())
-                .build();
+            return Response.ok(settingsService.settings())
+                    .build();
         else
             return Response.status(Response.Status.UNAUTHORIZED)
                     .build();

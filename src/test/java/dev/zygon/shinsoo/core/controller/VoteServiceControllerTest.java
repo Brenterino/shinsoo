@@ -17,8 +17,9 @@
 */
 package dev.zygon.shinsoo.core.controller;
 
-import dev.zygon.shinsoo.message.UserStatus;
-import dev.zygon.shinsoo.service.UserService;
+import dev.zygon.shinsoo.message.VotePingback;
+import dev.zygon.shinsoo.service.VoteService;
+import org.jboss.resteasy.spi.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,32 +31,44 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class IndexServiceControllerTest {
-
-    private UserStatus status;
+class VoteServiceControllerTest {
 
     @Mock
-    private UserService service;
+    private HttpRequest request;
+
+    @Mock
+    private VoteService service;
 
     @InjectMocks
-    private IndexServiceController controller;
+    private VoteServiceController controller;
 
     @BeforeEach
     void setup() {
-        status = new UserStatus();
+        when(request.getRemoteAddress())
+                .thenReturn("127.0.0.1");
     }
 
     @Test
-    void whenIndexIsCalledUserStatusIsRetrievedFromService() {
-        when(service.session())
-                .thenReturn(status);
+    void whenVoteServiceCannotProcessPingbackResponseHasBadRequestStatus() {
+        when(service.process(any(VotePingback.class)))
+                .thenReturn(false);
 
-        Response response = controller.index();
+        Response response = controller.vote("", 0, "", "", "");
+
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    void whenVoteServiceProcessesPingbackResponseHasOkStatus() {
+        when(service.process(any(VotePingback.class)))
+                .thenReturn(true);
+
+        Response response = controller.vote("", 0, "", "", "");
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(status, response.getEntity());
     }
 }

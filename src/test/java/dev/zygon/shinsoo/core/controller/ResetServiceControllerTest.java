@@ -17,9 +17,9 @@
 */
 package dev.zygon.shinsoo.core.controller;
 
-import dev.zygon.shinsoo.message.UserStatus;
-import dev.zygon.shinsoo.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
+import dev.zygon.shinsoo.message.ResetCredentials;
+import dev.zygon.shinsoo.message.SimpleResponse;
+import dev.zygon.shinsoo.service.UserResetService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,35 +27,33 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class IndexServiceControllerTest {
-
-    private UserStatus status;
+class ResetServiceControllerTest {
 
     @Mock
-    private UserService service;
+    private UserResetService service;
 
     @InjectMocks
-    private IndexServiceController controller;
-
-    @BeforeEach
-    void setup() {
-        status = new UserStatus();
-    }
+    private ResetServiceController controller;
 
     @Test
-    void whenIndexIsCalledUserStatusIsRetrievedFromService() {
-        when(service.session())
-                .thenReturn(status);
+    void whenResetIsRequestedServiceProcessesItAndReturnsAResponse() {
+        SimpleResponse simpleResponse = SimpleResponse.builder()
+                .success(false)
+                .error(Collections.singletonList("Unsupported"))
+                .build();
+        when(service.reset(any(ResetCredentials.class)))
+                .thenReturn(simpleResponse);
 
-        Response response = controller.index();
+        Response response = controller.reset(new ResetCredentials());
 
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(status, response.getEntity());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(simpleResponse, response.getEntity());
     }
 }
