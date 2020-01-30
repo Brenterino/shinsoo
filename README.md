@@ -1,8 +1,62 @@
-# shinsoo project
+![alt text](https://i.imgur.com/22D6PAc.png "Shinsoo")
+
+## About
+
+Shinsoo is a backend implementation for [Aria](https://github.com/AlanMorel/aria)
+utilizing modern Java tooling.
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+If you want to learn more about Quarkus, please visit its website: https://quarkus.io/
+
+All issues and features that require work will be placed in the issues section of this
+repository.  Please submit pull requests with feature changes if desired.
+
+## Configuration
+Note that after configuration, the application may need to be built following instructions
+below.
+
+## General Configuration
+All general configuration can be found in **src/main/resources/application.properties**
+and should be changed prior to deployment.  For information on settings to deploy with
+HTTPS, please consult the official Quarkus documentation.
+
+### Database Configuration
+
+The database must be configured in three places:
+- src/main/resources/application.properties
+- src/main/resources/[xxx].dsl.json
+- build.gradle.kts
+
+#### application.properties
+
+All sections in the Database Config section must be filled in.  This includes
+- database.driver
+- database.url
+- database.user
+- database.pass
+
+If using a custom DSL JSON dictionary, please also configure:
+- dsl.json.source
+
+#### [xxx].dsl.json
+
+The DSL JSON dictionary represents mappings of entities used in the application
+to the names utilized in the database.  This includes table names as well as
+column names.  Please refer to example.dsl.json for the complete list of these
+mappings.
+
+#### build.gradle.kts
+
+If a different driver it utilized besides the default (MySQL), then it must be
+supplied as a runtime dependency in the build script.
+
+### Cache Configuration
+
+It is not recommended to touch the cache configuration; however, if it is required,
+the cache settings may be modified in the Infinispan settings located at:
+
+src/main/resources/infinispan-embedded.xml
 
 ## Running the application in dev mode
 
