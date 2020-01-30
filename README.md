@@ -1,4 +1,6 @@
-![alt text](https://i.imgur.com/22D6PAc.png "Shinsoo")
+<p align="center">
+    <img src="https://i.imgur.com/22D6PAc.png" alt="Shinsoo"/>
+</p>
 
 ## About
 
