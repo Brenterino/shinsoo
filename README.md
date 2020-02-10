@@ -1,7 +1,3 @@
-<p align="center">
-    <img src="https://i.imgur.com/22D6PAc.png" alt="Shinsoo"/>
-</p>
-
 ## About
 
 Shinsoo is a backend implementation for [Aria](https://github.com/AlanMorel/aria)
